@@ -1,0 +1,13 @@
+{
+  "extends": ["solhint:recommended"],
+  "rules": {
+    "max-line-length": ["error", 120],
+    "func-name-mixedcase": "off",
+    "private-vars-leading-underscore": "off",
+    "compiler-version": ["error", "^0.8.20"],
+    "func-visibility": ["warn", { "ignoreConstructors": true }],
+    "no-empty-blocks": "off",
+    "use-natspec": "off",
+    "no-global-import": "off"
+  }
+}

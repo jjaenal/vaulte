@@ -1,0 +1,29 @@
+# Node
+node_modules/
+npm-debug.log*
+package-lock.json
+
+# Env files
+.env
+vaulte-backend/.env
+vaulte-contracts/.env
+
+# Logs
+*.log
+
+# Coverage
+coverage/
+vaulte-contracts/coverage/
+vaulte-contracts/coverage.json
+vaulte-contracts/coverage-final.json
+vaulte-contracts/lcov.info
+
+# Hardhat artifacts & cache
+vaulte-contracts/artifacts/
+vaulte-contracts/cache/
+
+# Trae
+.trae/
+
+# MacOS
+.DS_Store
