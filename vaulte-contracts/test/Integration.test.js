@@ -183,7 +183,7 @@ describe("Integration Tests - Full Flow", function () {
 
       // Try to approve again - should fail
       await expect(marketplace.connect(owner).approveRequest(requestId))
-        .to.be.revertedWith("not requested");
+        .to.be.revertedWithCustomError(marketplace, "RequestNotRequested");
     });
 
     it("should calculate quote correctly", async function () {

@@ -125,17 +125,17 @@ describe("DataMarketplace", function () {
   // Edge case tests for better branch coverage
   it("approve request reverts for non-existent request", async function () {
     await expect(market.approveRequest(999))
-      .to.be.revertedWith("not exists");
+      .to.be.revertedWithCustomError(market, "RequestNotExists");
   });
 
   it("reject request reverts for non-existent request", async function () {
     await expect(market.rejectRequest(999))
-      .to.be.revertedWith("not exists");
+      .to.be.revertedWithCustomError(market, "RequestNotExists");
   });
 
   it("cancel request reverts for non-existent request", async function () {
     await expect(market.connect(buyer).cancelRequest(999))
-      .to.be.revertedWith("not buyer");
+      .to.be.revertedWithCustomError(market, "NotRequestBuyer");
   });
 
   it("approve request reverts if not pending", async function () {
@@ -147,7 +147,7 @@ describe("DataMarketplace", function () {
     
     // Try to approve again
     await expect(market.approveRequest(1))
-      .to.be.revertedWith("not requested");
+      .to.be.revertedWithCustomError(market, "RequestNotRequested");
   });
 
   it("reject request reverts if not pending", async function () {
@@ -159,7 +159,7 @@ describe("DataMarketplace", function () {
     
     // Try to reject again
     await expect(market.rejectRequest(1))
-      .to.be.revertedWith("not requested");
+      .to.be.revertedWithCustomError(market, "RequestNotRequested");
   });
 
   it("cancel request reverts if not pending", async function () {
@@ -171,7 +171,7 @@ describe("DataMarketplace", function () {
     
     // Try to cancel approved request
     await expect(market.connect(buyer).cancelRequest(1))
-      .to.be.revertedWith("not requested");
+      .to.be.revertedWithCustomError(market, "RequestNotRequested");
   });
 
   it("only owner can approve request", async function () {
@@ -197,16 +197,17 @@ describe("DataMarketplace", function () {
     await market.connect(buyer).requestAccess(1, 5, { value: total });
     
     await expect(market.connect(other).cancelRequest(1))
-      .to.be.revertedWith("not buyer");
+      .to.be.revertedWithCustomError(market, "NotRequestBuyer");
   });
 
   it("quote reverts for non-existent category", async function () {
     await expect(market.quote(999, 5))
-      .to.be.revertedWith("not exists");
+      .to.be.revertedWithCustomError(market, "CategoryNotExists");
   });
 
   it("quote reverts on zero duration", async function () {
-    await expect(market.quote(1, 0)).to.be.revertedWith("duration 0");
+    await expect(market.quote(1, 0))
+      .to.be.revertedWithCustomError(market, "ZeroDuration");
   });
 
   it("request access reverts for inactive category", async function () {
@@ -214,14 +215,14 @@ describe("DataMarketplace", function () {
     await vault.deactivateDataCategory(1);
     
     await expect(market.connect(buyer).requestAccess(1, 5, { value: 0 }))
-      .to.be.revertedWith("inactive");
+      .to.be.revertedWithCustomError(market, "CategoryInactive");
   });
 
   it("requestAccess reverts on bad amount", async function () {
     const [total] = await market.quote(1, 3);
     // Underpay by 1 wei
     await expect(market.connect(buyer).requestAccess(1, 3, { value: total - 1n }))
-      .to.be.revertedWith("bad amount");
+      .to.be.revertedWithCustomError(market, "IncorrectPaymentAmount");
   });
 
   it("rejectRequest refund fails when buyer reverts on receive", async function () {
@@ -236,7 +237,8 @@ describe("DataMarketplace", function () {
     await txReq.wait();
 
     // Owner rejects; refund to buyer contract should fail
-    await expect(market.rejectRequest(1)).to.be.revertedWith("refund fail");
+    await expect(market.rejectRequest(1))
+      .to.be.revertedWithCustomError(market, "RefundFailed");
   });
 
   it("cancelRequest refund fails when buyer reverts on receive", async function () {
@@ -249,7 +251,8 @@ describe("DataMarketplace", function () {
     await txReq.wait();
 
     // Cancel via buyer contract; refund back to buyer contract should fail
-    await expect(reverter.cancel(market.target, 1)).to.be.revertedWith("refund fail");
+    await expect(reverter.cancel(market.target, 1))
+      .to.be.revertedWithCustomError(market, "RefundFailed");
   });
 
   it("emits RequestApproved with correct requestId", async function () {

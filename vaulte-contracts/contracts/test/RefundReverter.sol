@@ -5,8 +5,11 @@ import "./IDataMarketplace.sol";
 /// @title RefundReverter - Buyer contract that reverts on receiving ETH
 /// @notice Used to test refund paths in DataMarketplace (reject and cancel)
 contract RefundReverter {
+    /// @dev Custom error used to replace string revert
+    error RefundReceiveFail();
+
     receive() external payable {
-        revert("refund receive fail");
+        revert RefundReceiveFail();
     }
 
     function request(

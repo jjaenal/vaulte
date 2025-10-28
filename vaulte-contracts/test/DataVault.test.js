@@ -31,10 +31,10 @@ describe("DataVault", function () {
 
   it("rejects invalid register inputs", async function () {
     await expect(vault.registerDataCategory("", ethers.parseEther("0.1"), ethers.ZeroHash))
-      .to.be.revertedWith("name empty");
+      .to.be.revertedWithCustomError(vault, "EmptyName");
     
     await expect(vault.registerDataCategory("Fitness", 0, ethers.ZeroHash))
-      .to.be.revertedWith("price 0");
+      .to.be.revertedWithCustomError(vault, "ZeroPrice");
   });
 
   it("only owner can update and deactivate category", async function () {
@@ -65,7 +65,7 @@ describe("DataVault", function () {
 
     // Non-owner/marketplace cannot grant
     await expect(vault.connect(user).grantPermission(categoryId, buyer.address, 7))
-      .to.be.revertedWith("unauthorized");
+      .to.be.revertedWithCustomError(vault, "Unauthorized");
 
     // Owner can grant
     await vault.grantPermission(categoryId, buyer.address, 7);
@@ -108,7 +108,7 @@ describe("DataVault", function () {
     await vault.deactivateDataCategory(categoryId);
     
     await expect(vault.grantPermission(categoryId, buyer.address, 7))
-      .to.be.revertedWith("inactive");
+      .to.be.revertedWithCustomError(vault, "CategoryInactive");
   });
 
   it("grant permission reverts on zero duration", async function () {
@@ -116,7 +116,7 @@ describe("DataVault", function () {
     const categoryId = await vault.totalCategories();
     
     await expect(vault.grantPermission(categoryId, buyer.address, 0))
-      .to.be.revertedWith("duration 0");
+      .to.be.revertedWithCustomError(vault, "ZeroDuration");
   });
 
   it("grant permission reverts with zero address buyer", async function () {
@@ -124,7 +124,7 @@ describe("DataVault", function () {
     const categoryId = await vault.totalCategories();
     
     await expect(vault.grantPermission(categoryId, ethers.ZeroAddress, 7))
-      .to.be.revertedWith("buyer 0");
+      .to.be.revertedWithCustomError(vault, "ZeroAddress");
   });
 
   it("revoke permission reverts when no permission exists", async function () {
@@ -132,7 +132,7 @@ describe("DataVault", function () {
     const categoryId = await vault.totalCategories();
     
     await expect(vault.revokePermission(categoryId, buyer.address))
-      .to.be.revertedWith("not granted");
+      .to.be.revertedWithCustomError(vault, "PermissionNotGranted");
   });
 
   it("check permission returns false for non-existent category", async function () {
@@ -169,7 +169,7 @@ describe("DataVault", function () {
 
   // Additional coverage: setMarketplace zero address reverts and marketplace can act
   it("setMarketplace reverts on zero address and marketplace can grant", async function () {
-    await expect(vault.setMarketplace(ethers.ZeroAddress)).to.be.revertedWith("market 0");
+    await expect(vault.setMarketplace(ethers.ZeroAddress)).to.be.revertedWithCustomError(vault, "ZeroAddress");
 
     // Set marketplace and allow it to grant
     await vault.registerDataCategory("MP", ethers.parseEther("0.5"), ethers.ZeroHash);

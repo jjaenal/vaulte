@@ -6,6 +6,7 @@ const morgan = require('morgan');
 
 // Import routes
 const dataVaultRoutes = require('./routes/dataVault');
+const dataVaultWriteRoutes = require('./routes/dataVaultWrite');
 const dataMarketplaceRoutes = require('./routes/dataMarketplace');
 const dataMarketplaceWriteRoutes = require('./routes/dataMarketplaceWrite');
 
@@ -23,6 +24,7 @@ app.use(morgan('dev')); // Logging
 
 // Routes
 app.use('/api/data-vault', dataVaultRoutes);
+app.use('/api/data-vault', dataVaultWriteRoutes);
 app.use('/api/marketplace', dataMarketplaceRoutes);
 app.use('/api/marketplace', dataMarketplaceWriteRoutes);
 
