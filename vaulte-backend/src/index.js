@@ -15,6 +15,7 @@ const dataVaultRoutes = require('./routes/dataVault');
 const dataVaultWriteRoutes = require('./routes/dataVaultWrite');
 const dataMarketplaceRoutes = require('./routes/dataMarketplace');
 const dataMarketplaceWriteRoutes = require('./routes/dataMarketplaceWrite');
+const authRoutes = require('./routes/auth');
 
 // Load Swagger document
 const swaggerDocument = YAML.load(path.join(__dirname, 'docs/swagger.yaml'));
@@ -39,6 +40,7 @@ app.use('/api/data-vault', dataVaultRoutes);
 app.use('/api/data-vault', dataVaultWriteRoutes);
 app.use('/api/marketplace', dataMarketplaceRoutes);
 app.use('/api/marketplace', dataMarketplaceWriteRoutes);
+app.use('/api/auth', authRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -55,11 +57,13 @@ app.use((err, req, res) => {
   });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.info(`Vaulté API server running on port ${PORT}`);
-  console.info(`Environment: ${process.env.NODE_ENV}`);
-  console.info(`Connected to blockchain: ${process.env.RPC_URL}`);
-});
+// Start server only if this file is run directly (not imported)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.info(`Vaulté API server running on port ${PORT}`);
+    console.info(`Environment: ${process.env.NODE_ENV}`);
+    console.info(`Connected to blockchain: ${process.env.RPC_URL}`);
+  });
+}
 
 module.exports = app; // For testing

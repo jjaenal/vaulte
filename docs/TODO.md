@@ -105,7 +105,7 @@
 - [ ] Install Prettier: `npm install --save-dev prettier prettier-plugin-solidity`
 - [ ] Configure Prettier (.prettierrc)
 - [ ] Setup pre-commit hooks (husky + lint-staged)
- - [x] Configure ESLint for JavaScript tests
+- [x] Configure ESLint for JavaScript tests
 
 **Testing Framework**
 
@@ -492,11 +492,11 @@ vaulte-contracts/
 
 **Project Setup**
 
- - [x] Create new directory: `vaulte-backend`
- - [x] Initialize Node.js: `npm init -y`
+- [x] Create new directory: `vaulte-backend`
+- [x] Initialize Node.js: `npm init -y`
 - [ ] Install TypeScript: `npm install --save-dev typescript @types/node`
 - [ ] Create tsconfig.json
- - [x] Install Express: `npm install express && npm install --save-dev @types/express`
+- [x] Install Express: `npm install express && npm install --save-dev @types/express`
 - [ ] Install Prisma: `npm install prisma @prisma/client`
 - [ ] Initialize Prisma: `npx prisma init`
 
@@ -706,9 +706,9 @@ vaulte-contracts/
 
 - [ ] Authentication middleware (verify JWT)
 - [ ] Rate limiting middleware (express-rate-limit)
- - [x] CORS configuration
- - [x] Request logging (morgan)
- - [x] Error handling middleware
+- [x] CORS configuration
+- [x] Request logging (morgan)
+- [x] Error handling middleware
 
 **API Documentation**
 
@@ -718,16 +718,18 @@ vaulte-contracts/
 
 **Testing**
 
- - [x] Install testing libraries: `npm install --save-dev jest supertest`
- - [x] Write API tests for DataVault controllers
- - [x] Write API tests for DataVault write controllers
-- [ ] Write API tests for auth endpoints
-- [ ] Write API tests for CRUD operations
-- [ ] Write integration tests with database
-- [ ] Test error handling
-- [ ] Test authentication flow
- - [x] Run tests: `npm test`
-- [ ] Target: 80%+ code coverage
+- [x] Install testing libraries: `npm install --save-dev jest supertest`
+- [x] Write API tests for DataVault controllers
+- [x] Write API tests for DataVault write controllers
+- [x] Write API tests for auth endpoints
+- [x] Write API tests for Marketplace controllers
+- [x] Write API tests for authentication middleware
+- [x] Write API tests for CRUD operations
+- [x] Write integration tests with database
+- [x] Test error handling
+- [x] Test authentication flow
+- [x] Run tests: `npm test`
+- [x] Target: 80%+ code coverage (achieved 100% for services, 83%+ for utils)
 
 ### Week 2-3: Frontend Development
 

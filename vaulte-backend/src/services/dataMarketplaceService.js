@@ -86,8 +86,8 @@ class DataMarketplaceService {
       return {
         id: requestId,
         buyer: result[0],
-        categoryId: result[1],
-        seller: result[2],
+        seller: result[1],
+        categoryId: result[2],
         durationDays: result[3],
         totalAmount: result[4],
         status: this._mapRequestStatus(result[5])
