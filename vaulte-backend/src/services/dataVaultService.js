@@ -1,4 +1,4 @@
-const { publicClient, contractAddresses, contractABIs } = require('../utils/blockchain');
+const { publicClient, DATA_VAULT_ADDRESS, DataVaultABI } = require('../utils/blockchain');
 
 /**
  * Service for interacting with DataVault smart contract
@@ -12,8 +12,8 @@ class DataVaultService {
   async getUserCategories(userAddress) {
     try {
       const result = await publicClient.readContract({
-        address: contractAddresses.dataVault,
-        abi: contractABIs.dataVault,
+        address: DATA_VAULT_ADDRESS,
+        abi: DataVaultABI,
         functionName: 'getUserCategories',
         args: [userAddress]
       });
@@ -33,19 +33,19 @@ class DataVaultService {
   async getCategoryDetails(categoryId) {
     try {
       const result = await publicClient.readContract({
-        address: contractAddresses.dataVault,
-        abi: contractABIs.dataVault,
-        functionName: 'getCategory',
+        address: DATA_VAULT_ADDRESS,
+        abi: DataVaultABI,
+        functionName: 'getDataCategory',
         args: [categoryId]
       });
       
       return {
-        id: categoryId,
-        name: result[0],
-        owner: result[1],
-        pricePerDay: result[2],
-        dataHash: result[3],
-        active: result[4]
+        id: String(categoryId),
+        name: result.name,
+        owner: result.owner,
+        active: result.isActive,
+        pricePerDay: result.pricePerDay?.toString?.() ?? String(result.pricePerDay),
+        dataHash: result.dataHash
       };
     } catch (error) {
       console.error(`Error fetching category details for ID ${categoryId}:`, error);
@@ -62,34 +62,55 @@ class DataVaultService {
     try {
       // Read totalCategories (public uint)
       const totalCategories = await publicClient.readContract({
-        address: contractAddresses.dataVault,
-        abi: contractABIs.dataVault,
+        address: DATA_VAULT_ADDRESS,
+        abi: DataVaultABI,
         functionName: 'totalCategories'
       });
 
       const active = [];
       for (let i = 1n; i <= totalCategories; i++) {
         const cat = await publicClient.readContract({
-          address: contractAddresses.dataVault,
-          abi: contractABIs.dataVault,
+          address: DATA_VAULT_ADDRESS,
+          abi: DataVaultABI,
           functionName: 'getDataCategory',
           args: [i]
         });
         // cat: [name, owner, isActive, pricePerDay, dataHash]
-        if (cat[2]) {
+        if (cat.isActive) {
           active.push({
-            id: i,
-            name: cat[0],
-            owner: cat[1],
-            active: cat[2],
-            pricePerDay: cat[3],
-            dataHash: cat[4]
+            id: String(i),
+            name: cat.name,
+            owner: cat.owner,
+            active: cat.isActive,
+            pricePerDay: cat.pricePerDay?.toString?.() ?? String(cat.pricePerDay),
+            dataHash: cat.dataHash
           });
         }
       }
       return active;
     } catch (error) {
       console.error('Error fetching all active categories:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Check whether a buyer currently has valid permission
+   * @param {bigint|string|number} categoryId
+   * @param {string} buyer
+   * @returns {Promise<boolean>}
+   */
+  async checkPermission(categoryId, buyer) {
+    try {
+      const hasAccess = await publicClient.readContract({
+        address: DATA_VAULT_ADDRESS,
+        abi: DataVaultABI,
+        functionName: 'checkPermission',
+        args: [BigInt(categoryId), buyer]
+      });
+      return hasAccess;
+    } catch (error) {
+      console.error('Error checking permission:', error);
       throw error;
     }
   }

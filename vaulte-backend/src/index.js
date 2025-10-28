@@ -1,8 +1,14 @@
-require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const dotenv = require('dotenv');
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+const path = require('path');
+
+// Load environment variables
+dotenv.config();
 
 // Import routes
 const dataVaultRoutes = require('./routes/dataVault');
@@ -10,7 +16,10 @@ const dataVaultWriteRoutes = require('./routes/dataVaultWrite');
 const dataMarketplaceRoutes = require('./routes/dataMarketplace');
 const dataMarketplaceWriteRoutes = require('./routes/dataMarketplaceWrite');
 
-// Initialize express app
+// Load Swagger document
+const swaggerDocument = YAML.load(path.join(__dirname, 'docs/swagger.yaml'));
+
+// Create Express app
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -21,6 +30,9 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(morgan('dev')); // Logging
+
+// API Documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Routes
 app.use('/api/data-vault', dataVaultRoutes);
@@ -34,7 +46,7 @@ app.get('/health', (req, res) => {
 });
 
 // Error handling middleware
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   console.error(err.stack);
   res.status(500).json({
     error: true,
@@ -45,9 +57,9 @@ app.use((err, req, res, next) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Vaulté API server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV}`);
-  console.log(`Connected to blockchain: ${process.env.RPC_URL}`);
+  console.info(`Vaulté API server running on port ${PORT}`);
+  console.info(`Environment: ${process.env.NODE_ENV}`);
+  console.info(`Connected to blockchain: ${process.env.RPC_URL}`);
 });
 
 module.exports = app; // For testing

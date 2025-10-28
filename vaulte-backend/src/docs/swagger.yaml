@@ -1,0 +1,242 @@
+openapi: 3.0.0
+info:
+  title: Vaulté API
+  description: API untuk Vaulté - Decentralized Personal Data Marketplace
+  version: 1.0.0
+servers:
+  - url: http://localhost:3001
+    description: Development server
+paths:
+  /api/data-vault/categories/{id}:
+    get:
+      summary: Mendapatkan detail kategori data
+      description: Mengambil informasi lengkap tentang kategori data berdasarkan ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID kategori data
+      responses:
+        '200':
+          description: Sukses
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: '1'
+                      name:
+                        type: string
+                        example: 'Fitness Data'
+                      owner:
+                        type: string
+                        example: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
+                      active:
+                        type: boolean
+                        example: true
+                      pricePerDay:
+                        type: string
+                        example: '2000000000000000'
+                      dataHash:
+                        type: string
+                        example: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+        '400':
+          description: Parameter tidak valid
+        '404':
+          description: Kategori tidak ditemukan
+  
+  /api/data-vault/categories/{categoryId}/update:
+    post:
+      summary: Memperbarui kategori data
+      description: Memperbarui harga dan hash data untuk kategori tertentu
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID kategori data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - newPricePerDayWei
+                - newDataHash
+              properties:
+                newPricePerDayWei:
+                  type: string
+                  example: '2000000000000000'
+                newDataHash:
+                  type: string
+                  example: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+      responses:
+        '200':
+          description: Sukses
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  hash:
+                    type: string
+                    example: '0xeab1127b6a0a0264cbc52b8c54c048ea5545dc77ba4b7a4721b8051ec912e0d4'
+                  status:
+                    type: string
+                    example: 'success'
+        '400':
+          description: Parameter tidak valid
+        '403':
+          description: Tidak memiliki izin
+        '404':
+          description: Kategori tidak ditemukan
+  
+  /api/data-vault/permissions/check:
+    get:
+      summary: Memeriksa izin akses
+      description: Memeriksa apakah pembeli memiliki izin akses ke kategori data tertentu
+      parameters:
+        - name: categoryId
+          in: query
+          required: true
+          schema:
+            type: string
+          description: ID kategori data
+        - name: buyer
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Alamat wallet pembeli
+      responses:
+        '200':
+          description: Sukses
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  categoryId:
+                    type: string
+                    example: '1'
+                  buyer:
+                    type: string
+                    example: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'
+                  hasAccess:
+                    type: boolean
+                    example: true
+        '400':
+          description: Parameter tidak valid
+  
+  /api/data-vault/permissions/grant:
+    post:
+      summary: Memberikan izin akses
+      description: Memberikan izin akses ke kategori data untuk pembeli tertentu
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - categoryId
+                - buyer
+                - durationDays
+              properties:
+                categoryId:
+                  type: string
+                  example: '1'
+                buyer:
+                  type: string
+                  example: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'
+                durationDays:
+                  type: number
+                  example: 5
+      responses:
+        '200':
+          description: Sukses
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  hash:
+                    type: string
+                    example: '0xeab1127b6a0a0264cbc52b8c54c048ea5545dc77ba4b7a4721b8051ec912e0d4'
+                  status:
+                    type: string
+                    example: 'success'
+        '400':
+          description: Parameter tidak valid
+        '403':
+          description: Tidak memiliki izin
+        '404':
+          description: Kategori tidak ditemukan
+  
+  /api/data-vault/permissions/revoke:
+    post:
+      summary: Mencabut izin akses
+      description: Mencabut izin akses ke kategori data untuk pembeli tertentu
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - categoryId
+                - buyer
+              properties:
+                categoryId:
+                  type: string
+                  example: '1'
+                buyer:
+                  type: string
+                  example: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'
+      responses:
+        '200':
+          description: Sukses
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  hash:
+                    type: string
+                    example: '0xeab1127b6a0a0264cbc52b8c54c048ea5545dc77ba4b7a4721b8051ec912e0d4'
+                  status:
+                    type: string
+                    example: 'success'
+                  refundAmount:
+                    type: string
+                    example: '1000000000000000'
+        '400':
+          description: Parameter tidak valid
+        '403':
+          description: Tidak memiliki izin
+        '404':
+          description: Kategori tidak ditemukan atau izin tidak diberikan

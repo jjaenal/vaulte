@@ -33,7 +33,9 @@ class DataVaultWriteService {
             categoryId = Number(event.args.categoryId);
             break;
           }
-        } catch (_) {}
+        } catch {
+          console.warn('Decode event error, skipping log');
+        }
       }
 
       return { hash, status: receipt.status, categoryId };
@@ -98,6 +100,25 @@ class DataVaultWriteService {
       return { hash, status: receipt.status, refundAmount };
     } catch (error) {
       console.error('Error revokePermission:', error);
+      throw error;
+    }
+  }
+
+  async updateCategory(categoryId, newPricePerDayWei, newDataHash) {
+    try {
+      const { request } = await publicClient.simulateContract({
+        address: DATA_VAULT_ADDRESS,
+        abi: DataVaultABI,
+        functionName: 'updateDataCategory',
+        args: [categoryId, newPricePerDayWei, newDataHash],
+        account: account.address,
+      });
+
+      const hash = await walletClient.writeContract(request);
+      const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      return { hash, status: receipt.status };
+    } catch (error) {
+      console.error('Error updateCategory:', error);
       throw error;
     }
   }

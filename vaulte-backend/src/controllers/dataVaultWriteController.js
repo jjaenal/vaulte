@@ -85,12 +85,49 @@ const dataVaultWriteController = {
       }
 
       const result = await dataVaultWriteService.revokePermission(BigInt(categoryId), buyer);
-      return res.status(200).json({ success: true, ...result });
+      const formatted = {
+        success: true,
+        hash: result.hash,
+        status: result.status,
+        refundAmount: result.refundAmount != null ? result.refundAmount.toString() : null,
+      };
+      return res.status(200).json(formatted);
     } catch (error) {
       const msg = String(error?.shortMessage || error?.message || 'Unknown error');
       if (msg.includes('ZeroAddress')) return res.status(400).json({ error: true, message: 'Zero address' });
       if (msg.includes('InvalidCategoryId')) return res.status(400).json({ error: true, message: 'Invalid category id' });
       if (msg.includes('PermissionNotGranted')) return res.status(409).json({ error: true, message: 'Permission not granted' });
+      if (msg.includes('OwnableUnauthorizedAccount') || msg.includes('Unauthorized')) return res.status(403).json({ error: true, message: 'Unauthorized' });
+      return next(error);
+    }
+  },
+
+  async updateCategory(req, res, next) {
+    try {
+      const { categoryId } = req.params;
+      const { newPricePerDayWei, newDataHash } = req.body;
+
+      if (!categoryId || BigInt(categoryId) <= 0n) {
+        return res.status(400).json({ error: true, message: 'Invalid categoryId' });
+      }
+      if (!newPricePerDayWei || BigInt(newPricePerDayWei) <= 0n) {
+        return res.status(400).json({ error: true, message: 'Invalid newPricePerDayWei' });
+      }
+      if (!newDataHash || typeof newDataHash !== 'string' || !/^0x[0-9a-fA-F]{64}$/.test(newDataHash)) {
+        return res.status(400).json({ error: true, message: 'Invalid newDataHash (bytes32 hex)' });
+      }
+
+      const result = await dataVaultWriteService.updateCategory(
+        BigInt(categoryId),
+        BigInt(newPricePerDayWei),
+        newDataHash
+      );
+      return res.status(200).json({ success: true, ...result });
+    } catch (error) {
+      const msg = String(error?.shortMessage || error?.message || 'Unknown error');
+      if (msg.includes('InvalidCategoryId')) return res.status(400).json({ error: true, message: 'Invalid category id' });
+      if (msg.includes('ZeroPrice')) return res.status(400).json({ error: true, message: 'Invalid price' });
+      if (msg.includes('CategoryNotExists')) return res.status(404).json({ error: true, message: 'Category not exists' });
       if (msg.includes('OwnableUnauthorizedAccount') || msg.includes('Unauthorized')) return res.status(403).json({ error: true, message: 'Unauthorized' });
       return next(error);
     }

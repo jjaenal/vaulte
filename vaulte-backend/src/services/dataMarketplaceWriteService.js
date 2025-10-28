@@ -40,7 +40,8 @@ class DataMarketplaceWriteService {
             topics: log.topics,
           });
           return event.eventName === 'RequestCreated';
-        } catch (e) {
+        } catch {
+          console.warn('Decode log error, skipping');
           return false;
         }
       });

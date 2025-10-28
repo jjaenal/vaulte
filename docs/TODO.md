@@ -105,7 +105,7 @@
 - [ ] Install Prettier: `npm install --save-dev prettier prettier-plugin-solidity`
 - [ ] Configure Prettier (.prettierrc)
 - [ ] Setup pre-commit hooks (husky + lint-staged)
-- [ ] Configure ESLint for JavaScript tests
+ - [x] Configure ESLint for JavaScript tests
 
 **Testing Framework**
 
@@ -492,11 +492,11 @@ vaulte-contracts/
 
 **Project Setup**
 
-- [ ] Create new directory: `vaulte-backend`
-- [ ] Initialize Node.js: `npm init -y`
+ - [x] Create new directory: `vaulte-backend`
+ - [x] Initialize Node.js: `npm init -y`
 - [ ] Install TypeScript: `npm install --save-dev typescript @types/node`
 - [ ] Create tsconfig.json
-- [ ] Install Express: `npm install express && npm install --save-dev @types/express`
+ - [x] Install Express: `npm install express && npm install --save-dev @types/express`
 - [ ] Install Prisma: `npm install prisma @prisma/client`
 - [ ] Initialize Prisma: `npx prisma init`
 
@@ -706,20 +706,27 @@ vaulte-contracts/
 
 - [ ] Authentication middleware (verify JWT)
 - [ ] Rate limiting middleware (express-rate-limit)
-- [ ] CORS configuration
-- [ ] Request logging (morgan)
-- [ ] Error handling middleware
+ - [x] CORS configuration
+ - [x] Request logging (morgan)
+ - [x] Error handling middleware
+
+**API Documentation**
+
+- [x] Integrate Swagger UI at `/api-docs`
+- [x] Add `src/docs/swagger.yaml` covering DataVault/Marketplace endpoints
 - [ ] Input validation middleware (express-validator)
 
 **Testing**
 
-- [ ] Install testing libraries: `npm install --save-dev jest supertest`
+ - [x] Install testing libraries: `npm install --save-dev jest supertest`
+ - [x] Write API tests for DataVault controllers
+ - [x] Write API tests for DataVault write controllers
 - [ ] Write API tests for auth endpoints
 - [ ] Write API tests for CRUD operations
 - [ ] Write integration tests with database
 - [ ] Test error handling
 - [ ] Test authentication flow
-- [ ] Run tests: `npm test`
+ - [x] Run tests: `npm test`
 - [ ] Target: 80%+ code coverage
 
 ### Week 2-3: Frontend Development

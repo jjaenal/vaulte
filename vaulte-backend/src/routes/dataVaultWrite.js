@@ -17,6 +17,13 @@ router.post('/categories', dataVaultWriteController.registerCategory);
 router.post('/categories/:categoryId/deactivate', dataVaultWriteController.deactivateCategory);
 
 /**
+ * @route   POST /api/data-vault/categories/:categoryId/update
+ * @desc    Update price and data hash of a category
+ * @access  Protected via backend signer
+ */
+router.post('/categories/:categoryId/update', dataVaultWriteController.updateCategory);
+
+/**
  * @route   POST /api/data-vault/permissions/grant
  * @desc    Grant permission to a buyer for a category
  * @access  Protected via backend signer

@@ -22,8 +22,8 @@ const publicClient = createPublicClient({
 // Import wallet client for write operations
 const { walletClient, account } = require('./wallet');
 
-console.log(`Connected to blockchain: ${process.env.RPC_URL || 'http://localhost:8545'}`);
-console.log(`Using wallet address: ${account.address}`);
+console.info(`Connected to blockchain: ${process.env.RPC_URL || 'http://localhost:8545'}`);
+console.info(`Using wallet address: ${account.address}`);
 
 module.exports = {
   publicClient,

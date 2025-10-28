@@ -23,4 +23,11 @@ router.get('/categories/user/:address', dataVaultController.getUserCategories);
  */
 router.get('/categories/:categoryId', dataVaultController.getCategoryDetails);
 
+/**
+ * @route   GET /api/data-vault/permissions/check
+ * @desc    Check permission for a buyer on a category
+ * @access  Public
+ */
+router.get('/permissions/check', dataVaultController.checkPermission);
+
 module.exports = router;
