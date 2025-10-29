@@ -11,6 +11,14 @@ type Buyer = {
   status: 'active' | 'paused' | 'pending';
 };
 
+type Source = {
+  name: string;
+  description: string;
+  connected: boolean;
+  lastSynced?: string;
+  oauth?: boolean;
+};
+
 type Category = {
   id: number;
   name: string;
@@ -90,6 +98,13 @@ export default function VaultPage() {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [editPrice, setEditPrice] = useState<string>('');
 
+  const [sources, setSources] = useState<Source[]>([
+    { name: 'Google Fit', description: 'Health & activity data', connected: false, oauth: true },
+    { name: 'Apple Health', description: 'Vitals & health records', connected: false, oauth: false },
+    { name: 'Strava', description: 'Workout performance', connected: false, oauth: true },
+    { name: 'Fitbit', description: 'Fitness tracking', connected: false, oauth: true },
+  ]);
+
   const toggleCategory = (id: number) => {
     setCategories((prev) =>
       prev.map((c) => (c.id === id ? { ...c, enabled: !c.enabled } : c))
@@ -116,6 +131,23 @@ export default function VaultPage() {
     setCategories((prev) => prev.map((c) => (c.id === selectedCategory.id ? { ...c, pricePerDay: price } : c)));
     setIsModalOpen(false);
     showToast('Category updated', 'success');
+  };
+
+  const connectSource = (name: string) => {
+    setSources((prev) =>
+      prev.map((s) => (s.name === name ? { ...s, connected: true, lastSynced: new Date().toISOString().slice(0, 10) } : s))
+    );
+    showToast(`${name} connected`, 'success');
+  };
+
+  const disconnectSource = (name: string) => {
+    setSources((prev) => prev.map((s) => (s.name === name ? { ...s, connected: false } : s)));
+    showToast(`${name} disconnected`, 'success');
+  };
+
+  const syncSource = (name: string) => {
+    setSources((prev) => prev.map((s) => (s.name === name ? { ...s, lastSynced: new Date().toISOString().slice(0, 10) } : s)));
+    showToast(`${name} synced`, 'success');
   };
 
   if (!isConnected) {
@@ -358,29 +390,57 @@ export default function VaultPage() {
         <div className="mt-12">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Connect Data Sources</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { name: 'Google Fit', logo: '/globe.svg', description: 'Health & activity data' },
-              { name: 'Apple Health', logo: '/globe.svg', description: 'Vitals & health records' },
-              { name: 'Strava', logo: '/globe.svg', description: 'Workout performance' },
-              { name: 'Fitbit', logo: '/globe.svg', description: 'Fitness tracking' },
-            ].map((src) => (
+            {sources.map((src) => (
               <div key={src.name} className="bg-white shadow rounded-lg p-6">
                 <div className="flex items-center gap-3">
                   <span className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center">
-                    <span className="text-purple-600 text-sm">🔗</span>
+                    <span className="text-purple-600 text-sm">{src.oauth ? '🔐' : '🔗'}</span>
                   </span>
                   <div>
                     <p className="text-sm font-semibold text-gray-900">{src.name}</p>
                     <p className="text-xs text-gray-500">{src.description}</p>
                   </div>
                 </div>
-                <div className="mt-4">
-                  <Link
-                    href="/integrations"
-                    className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-                  >
-                    Connect
-                  </Link>
+                <div className="mt-3 flex items-center justify-between">
+                  <span className={`inline-flex items-center rounded-full px-2 py-1 text-[11px] font-medium ${
+                    src.connected ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+                  }`}>
+                    {src.connected ? 'Connected' : 'Not connected'}
+                  </span>
+                  <span className="text-[11px] text-gray-500">{src.lastSynced ? `Last synced ${src.lastSynced}` : 'Not synced'}</span>
+                </div>
+                <div className="mt-4 flex items-center gap-2">
+                  {src.connected ? (
+                    <>
+                      <button
+                        onClick={() => syncSource(src.name)}
+                        className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+                      >
+                        Sync
+                      </button>
+                      <button
+                        onClick={() => disconnectSource(src.name)}
+                        className="inline-flex items-center rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
+                      >
+                        Disconnect
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => connectSource(src.name)}
+                        className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+                      >
+                        {src.oauth ? 'Connect (OAuth)' : 'Connect'}
+                      </button>
+                      <Link
+                        href="/integrations"
+                        className="inline-flex items-center rounded-md bg-purple-600 px-3 py-2 text-sm font-medium text-white hover:bg-purple-700"
+                      >
+                        Manage
+                      </Link>
+                    </>
+                  )}
                 </div>
               </div>
             ))}

@@ -922,10 +922,10 @@ vaulte-contracts/
       - Buyer list
       - Save changes button
 
-- [ ] Connect Data Source Section
-      - Available integrations grid
-      - OAuth connection buttons
-      - Connection status indicators
+- [x] Connect Data Source Section
+      - [x] Available integrations grid
+      - [x] OAuth connection buttons
+      - [x] Connection status indicators
 ```
 
 **Page 4: Marketplace (app/marketplace/page.tsx)**
