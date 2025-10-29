@@ -693,28 +693,28 @@ vaulte-contracts/
 
 **Encryption Layer**
 
-- [ ] Install crypto: `npm install crypto-js`
-- [ ] Create encryption utility functions:
-  - [ ] generateKey() - derive key from user password/signature
-  - [ ] encrypt(data, key) - AES-256 encryption
-  - [ ] decrypt(data, key) - AES-256 decryption
-- [ ] Implement key management (user-controlled keys)
-- [ ] Test encryption/decryption with sample data
-- [ ] Benchmark encryption performance (target: <100ms for 1MB)
+ - [ ] Install crypto: `npm install crypto-js`
+ - [x] Create encryption utility functions:
+   - [x] generateKey() - derive key from user password/signature
+   - [x] encrypt(data, key) - AES-256 encryption
+   - [x] decrypt(data, key) - AES-256 decryption
+ - [ ] Implement key management (user-controlled keys)
+ - [x] Test encryption/decryption with sample data
+ - [ ] Benchmark encryption performance (target: <100ms for 1MB)
 
 **Middleware**
 
-- [ ] Authentication middleware (verify JWT)
-- [ ] Rate limiting middleware (express-rate-limit)
-- [x] CORS configuration
-- [x] Request logging (morgan)
-- [x] Error handling middleware
+ - [x] Authentication middleware (verify JWT)
+ - [x] Rate limiting middleware (express-rate-limit)
+ - [x] CORS configuration
+ - [x] Request logging (morgan)
+ - [x] Error handling middleware
 
 **API Documentation**
 
-- [x] Integrate Swagger UI at `/api-docs`
-- [x] Add `src/docs/swagger.yaml` covering DataVault/Marketplace endpoints
-- [ ] Input validation middleware (express-validator)
+ - [x] Integrate Swagger UI at `/api-docs`
+ - [x] Add `src/docs/swagger.yaml` covering DataVault/Marketplace endpoints
+ - [ ] Input validation middleware (express-validator)
 
 **Testing**
 
