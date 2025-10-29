@@ -1,33 +1,34 @@
 const express = require('express');
 const router = express.Router();
 const dataMarketplaceWriteController = require('../controllers/dataMarketplaceWriteController');
+const { authenticateToken } = require('../middleware/auth');
 
 /**
  * @route POST /api/marketplace/request
  * @desc Request access to a data category
- * @access Public
+ * @access Protected (JWT required)
  */
-router.post('/request', dataMarketplaceWriteController.requestAccess);
+router.post('/request', authenticateToken, dataMarketplaceWriteController.requestAccess);
 
 /**
  * @route POST /api/marketplace/approve/:requestId
  * @desc Approve an access request
- * @access Public
+ * @access Protected (JWT required)
  */
-router.post('/approve/:requestId', dataMarketplaceWriteController.approveRequest);
+router.post('/approve/:requestId', authenticateToken, dataMarketplaceWriteController.approveRequest);
 
 /**
  * @route POST /api/marketplace/reject/:requestId
  * @desc Reject an access request
- * @access Public
+ * @access Protected (JWT required)
  */
-router.post('/reject/:requestId', dataMarketplaceWriteController.rejectRequest);
+router.post('/reject/:requestId', authenticateToken, dataMarketplaceWriteController.rejectRequest);
 
 /**
  * @route POST /api/marketplace/cancel/:requestId
  * @desc Cancel an access request
- * @access Public
+ * @access Protected (JWT required)
  */
-router.post('/cancel/:requestId', dataMarketplaceWriteController.cancelRequest);
+router.post('/cancel/:requestId', authenticateToken, dataMarketplaceWriteController.cancelRequest);
 
 module.exports = router;

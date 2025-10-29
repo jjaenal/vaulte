@@ -2,10 +2,29 @@ jest.mock('../../src/services/dataMarketplaceWriteService');
 const request = require('supertest');
 const app = require('../../src/index');
 const dataMarketplaceWriteService = require('../../src/services/dataMarketplaceWriteService');
+const { ethers } = require('ethers');
 
 describe('DataMarketplace Write Controller (Endpoints)', () => {
-  beforeEach(() => {
+  let authToken;
+  let testWallet;
+  let testAddress;
+
+  beforeEach(async () => {
     jest.clearAllMocks();
+    
+    // Create test wallet and get auth token
+    testWallet = ethers.Wallet.createRandom();
+    testAddress = testWallet.address;
+    
+    const loginResponse = await request(app)
+      .post('/api/auth/register')
+      .send({
+        email: 'test@example.com',
+        password: 'password123',
+        walletAddress: testAddress
+      });
+    
+    authToken = loginResponse.body.data.token;
   });
 
   describe('POST /api/marketplace/request', () => {
@@ -17,6 +36,7 @@ describe('DataMarketplace Write Controller (Endpoints)', () => {
 
       const res = await request(app)
         .post('/api/marketplace/request')
+        .set('Authorization', `Bearer ${authToken}`)
         .send(payload)
         .expect(201);
 
@@ -32,6 +52,7 @@ describe('DataMarketplace Write Controller (Endpoints)', () => {
     it('should return 400 when missing fields', async () => {
       const res = await request(app)
         .post('/api/marketplace/request')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ categoryId: 1 })
         .expect(400);
 
@@ -43,6 +64,7 @@ describe('DataMarketplace Write Controller (Endpoints)', () => {
 
       const res = await request(app)
         .post('/api/marketplace/request')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ categoryId: 1, durationDays: 7 })
         .expect(400);
 
@@ -55,6 +77,7 @@ describe('DataMarketplace Write Controller (Endpoints)', () => {
 
       const res = await request(app)
         .post('/api/marketplace/request')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ categoryId: 1, durationDays: 7 })
         .expect(400);
 
@@ -70,6 +93,7 @@ describe('DataMarketplace Write Controller (Endpoints)', () => {
 
       const res = await request(app)
         .post('/api/marketplace/approve/55')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ ownerAddress: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' })
         .expect(200);
 
@@ -83,6 +107,7 @@ describe('DataMarketplace Write Controller (Endpoints)', () => {
 
       const res = await request(app)
         .post('/api/marketplace/approve/55')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ ownerAddress: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' })
         .expect(403);
 
@@ -95,6 +120,7 @@ describe('DataMarketplace Write Controller (Endpoints)', () => {
 
       const res = await request(app)
         .post('/api/marketplace/approve/55')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ ownerAddress: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' })
         .expect(400);
 
@@ -110,6 +136,7 @@ describe('DataMarketplace Write Controller (Endpoints)', () => {
 
       const res = await request(app)
         .post('/api/marketplace/reject/77')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ ownerAddress: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' })
         .expect(200);
 
@@ -123,6 +150,7 @@ describe('DataMarketplace Write Controller (Endpoints)', () => {
 
       const res = await request(app)
         .post('/api/marketplace/reject/77')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ ownerAddress: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' })
         .expect(403);
 
@@ -135,6 +163,7 @@ describe('DataMarketplace Write Controller (Endpoints)', () => {
 
       const res = await request(app)
         .post('/api/marketplace/reject/77')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ ownerAddress: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' })
         .expect(400);
 
@@ -150,6 +179,7 @@ describe('DataMarketplace Write Controller (Endpoints)', () => {
 
       const res = await request(app)
         .post('/api/marketplace/cancel/88')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ buyerAddress: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8' })
         .expect(200);
 
@@ -163,6 +193,7 @@ describe('DataMarketplace Write Controller (Endpoints)', () => {
 
       const res = await request(app)
         .post('/api/marketplace/cancel/88')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ buyerAddress: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8' })
         .expect(403);
 
@@ -175,6 +206,7 @@ describe('DataMarketplace Write Controller (Endpoints)', () => {
 
       const res = await request(app)
         .post('/api/marketplace/cancel/88')
+        .set('Authorization', `Bearer ${authToken}`)
         .send({ buyerAddress: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8' })
         .expect(400);
 

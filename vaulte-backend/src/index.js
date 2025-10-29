@@ -1,11 +1,21 @@
 const express = require('express');
-const cors = require('cors');
 const helmet = require('helmet');
-const morgan = require('morgan');
 const dotenv = require('dotenv');
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const path = require('path');
+// Rate limiting middleware
+const {
+  generalLimiter,
+  authLimiter,
+  writeLimiter,
+  progressiveSlowdown,
+  rateLimitInfo
+} = require('./middleware/rateLimiting');
+const { createCompositeLimiter, testBypass } = require('./middleware/rateLimiting');
+const { errorHandler } = require('./middleware/errorHandler');
+const { createCors } = require('./middleware/cors');
+const { createLogger } = require('./middleware/logging');
 
 // Load environment variables
 dotenv.config();
@@ -26,21 +36,27 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(helmet()); // Security headers
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000'
-}));
+app.use(createCors());
 app.use(express.json());
-app.use(morgan('dev')); // Logging
+app.use(createLogger()); // Logging
+// Rate limit info headers
+app.use(rateLimitInfo);
+// Apply general rate limiter and progressive slowdown globally
+app.use(generalLimiter);
+app.use(progressiveSlowdown);
 
 // API Documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Routes
 app.use('/api/data-vault', dataVaultRoutes);
-app.use('/api/data-vault', dataVaultWriteRoutes);
+// Apply write limiter only for write routes
+app.use('/api/data-vault', writeLimiter, dataVaultWriteRoutes);
 app.use('/api/marketplace', dataMarketplaceRoutes);
-app.use('/api/marketplace', dataMarketplaceWriteRoutes);
-app.use('/api/auth', authRoutes);
+app.use('/api/marketplace', writeLimiter, dataMarketplaceWriteRoutes);
+// Strict limiter for auth endpoints, bypass during tests
+const authLimiterWithBypass = createCompositeLimiter(testBypass, authLimiter);
+app.use('/api/auth', authLimiterWithBypass, authRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -48,14 +64,7 @@ app.get('/health', (req, res) => {
 });
 
 // Error handling middleware
-app.use((err, req, res) => {
-  console.error(err.stack);
-  res.status(500).json({
-    error: true,
-    message: err.message || 'Internal Server Error',
-    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
-  });
-});
+app.use(errorHandler);
 
 // Start server only if this file is run directly (not imported)
 if (require.main === module) {

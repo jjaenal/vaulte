@@ -6,6 +6,13 @@ info:
 servers:
   - url: http://localhost:3001
     description: Development server
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
 paths:
   /api/data-vault/categories/{id}:
     get:
@@ -59,6 +66,8 @@ paths:
     post:
       summary: Memperbarui kategori data
       description: Memperbarui harga dan hash data untuk kategori tertentu
+      security:
+        - BearerAuth: []
       parameters:
         - name: categoryId
           in: path
@@ -101,6 +110,93 @@ paths:
                     example: 'success'
         '400':
           description: Parameter tidak valid
+        '403':
+          description: Tidak memiliki izin
+        '404':
+          description: Kategori tidak ditemukan
+
+  /api/data-vault/categories:
+    post:
+      summary: Mendaftarkan kategori data baru
+      description: Mendaftarkan kategori data baru untuk pemilik data
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - pricePerDayWei
+                - dataHash
+              properties:
+                name:
+                  type: string
+                  example: 'Fitness Data'
+                pricePerDayWei:
+                  type: string
+                  example: '2000000000000000'
+                dataHash:
+                  type: string
+                  example: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+      responses:
+        '201':
+          description: Kategori berhasil didaftarkan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  hash:
+                    type: string
+                    example: '0xeab1127b6a0a0264cbc52b8c54c048ea5545dc77ba4b7a4721b8051ec912e0d4'
+                  status:
+                    type: string
+                    example: 'success'
+        '400':
+          description: Parameter tidak valid
+        '401':
+          description: Token autentikasi diperlukan
+
+  /api/data-vault/categories/{categoryId}/deactivate:
+    post:
+      summary: Menonaktifkan kategori data
+      description: Menonaktifkan kategori data yang dimiliki
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID kategori data
+      responses:
+        '200':
+          description: Kategori berhasil dinonaktifkan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  hash:
+                    type: string
+                    example: '0xeab1127b6a0a0264cbc52b8c54c048ea5545dc77ba4b7a4721b8051ec912e0d4'
+                  status:
+                    type: string
+                    example: 'success'
+        '400':
+          description: Parameter tidak valid
+        '401':
+          description: Token autentikasi diperlukan
         '403':
           description: Tidak memiliki izin
         '404':
@@ -150,6 +246,8 @@ paths:
     post:
       summary: Memberikan izin akses
       description: Memberikan izin akses ke kategori data untuk pembeli tertentu
+      security:
+        - BearerAuth: []
       requestBody:
         required: true
         content:
@@ -198,6 +296,8 @@ paths:
     post:
       summary: Mencabut izin akses
       description: Mencabut izin akses ke kategori data untuk pembeli tertentu
+      security:
+        - BearerAuth: []
       requestBody:
         required: true
         content:
@@ -240,3 +340,198 @@ paths:
           description: Tidak memiliki izin
         '404':
           description: Kategori tidak ditemukan atau izin tidak diberikan
+
+  /api/marketplace/request:
+    post:
+      summary: Membuat permintaan akses data
+      description: Membuat permintaan akses ke kategori data tertentu
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - categoryId
+                - buyerAddress
+                - durationDays
+              properties:
+                categoryId:
+                  type: string
+                  example: '1'
+                buyerAddress:
+                  type: string
+                  example: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'
+                durationDays:
+                  type: number
+                  example: 7
+      responses:
+        '201':
+          description: Permintaan berhasil dibuat
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  hash:
+                    type: string
+                    example: '0xeab1127b6a0a0264cbc52b8c54c048ea5545dc77ba4b7a4721b8051ec912e0d4'
+                  status:
+                    type: string
+                    example: 'success'
+        '400':
+          description: Parameter tidak valid atau kategori tidak aktif
+        '401':
+          description: Token autentikasi diperlukan
+
+  /api/marketplace/approve/{requestId}:
+    post:
+      summary: Menyetujui permintaan akses data
+      description: Menyetujui permintaan akses data dari pembeli
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID permintaan akses
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ownerAddress
+              properties:
+                ownerAddress:
+                  type: string
+                  example: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
+      responses:
+        '200':
+          description: Permintaan berhasil disetujui
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  hash:
+                    type: string
+                    example: '0xeab1127b6a0a0264cbc52b8c54c048ea5545dc77ba4b7a4721b8051ec912e0d4'
+                  status:
+                    type: string
+                    example: 'success'
+        '400':
+          description: Status permintaan tidak valid
+        '401':
+          description: Token autentikasi diperlukan
+        '403':
+          description: Hanya pemilik data yang dapat menyetujui
+
+  /api/marketplace/reject/{requestId}:
+    post:
+      summary: Menolak permintaan akses data
+      description: Menolak permintaan akses data dari pembeli
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID permintaan akses
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ownerAddress
+              properties:
+                ownerAddress:
+                  type: string
+                  example: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
+      responses:
+        '200':
+          description: Permintaan berhasil ditolak
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  hash:
+                    type: string
+                    example: '0xeab1127b6a0a0264cbc52b8c54c048ea5545dc77ba4b7a4721b8051ec912e0d4'
+                  status:
+                    type: string
+                    example: 'success'
+        '400':
+          description: Status permintaan tidak valid
+        '401':
+          description: Token autentikasi diperlukan
+        '403':
+          description: Hanya pemilik data yang dapat menolak
+
+  /api/marketplace/cancel/{requestId}:
+    post:
+      summary: Membatalkan permintaan akses data
+      description: Membatalkan permintaan akses data yang telah dibuat
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID permintaan akses
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - buyerAddress
+              properties:
+                buyerAddress:
+                  type: string
+                  example: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'
+      responses:
+        '200':
+          description: Permintaan berhasil dibatalkan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  hash:
+                    type: string
+                    example: '0xeab1127b6a0a0264cbc52b8c54c048ea5545dc77ba4b7a4721b8051ec912e0d4'
+                  status:
+                    type: string
+                    example: 'success'
+        '400':
+          description: Status permintaan tidak valid
+        '401':
+          description: Token autentikasi diperlukan
+        '403':
+          description: Hanya pembeli yang dapat membatalkan
