@@ -891,7 +891,7 @@ vaulte-contracts/
       - Line chart with recharts
       - Hover tooltips
 
-- [ ] Recent Activity Feed
+- [x] Recent Activity Feed
       - Latest requests
       - Recent payments
       - Connected data sources

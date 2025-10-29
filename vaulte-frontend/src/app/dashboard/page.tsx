@@ -50,6 +50,36 @@ export default function Dashboard() {
       .map(([date, amount]) => ({ date, amount }));
     return sorted;
   }, [earnings]);
+
+  // Recent Activity Feed (dummy data)
+  const activities = useMemo(
+    () => [
+      {
+        id: 'a-301',
+        type: 'payment',
+        title: 'Payment received',
+        description: '0x8765...4321 bought access to Health Records',
+        timestamp: '2025-01-15T11:20:00Z',
+        status: 'completed',
+      },
+      {
+        id: 'a-302',
+        type: 'request',
+        title: 'New access request',
+        description: '0x5432...9876 requested Fitness Data (7 days)',
+        timestamp: '2025-01-13T09:05:00Z',
+        status: 'pending',
+      },
+      {
+        id: 'a-303',
+        type: 'integration',
+        title: 'Data source connected',
+        description: 'Google Fit successfully connected',
+        timestamp: '2025-01-12T16:40:00Z',
+        status: 'completed',
+      },
+    ], []
+  );
   
   // Fetch data categories when user is connected
   useEffect(() => {
@@ -179,6 +209,40 @@ export default function Dashboard() {
               </LineChart>
             </ResponsiveContainer>
           </div>
+        </div>
+
+        {/* Recent Activity Feed */}
+        <div className="bg-white shadow rounded-lg p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900">Recent Activity</h3>
+              <p className="mt-1 text-xs text-gray-500">Latest requests, payments, and integrations</p>
+            </div>
+          </div>
+          <ul className="mt-4 divide-y divide-gray-100">
+            {activities.map((act) => (
+              <li key={act.id} className="py-3 flex items-start justify-between">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-gray-900">{act.title}</p>
+                  <p className="text-sm text-gray-600 truncate">{act.description}</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    {new Date(act.timestamp).toLocaleString()}
+                  </p>
+                </div>
+                <span
+                  className={
+                    act.status === 'completed'
+                      ? 'inline-flex items-center rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700'
+                      : act.status === 'pending'
+                      ? 'inline-flex items-center rounded-full bg-yellow-50 px-2 py-0.5 text-xs font-medium text-yellow-700'
+                      : 'inline-flex items-center rounded-full bg-gray-50 px-2 py-0.5 text-xs font-medium text-gray-700'
+                  }
+                >
+                  {act.status}
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
 
         {(isLoading || isLoadingCategories) && (
