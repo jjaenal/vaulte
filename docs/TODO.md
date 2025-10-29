@@ -21,7 +21,7 @@
    - [x] Tracking sheet template — see `docs/user-outreach-tracking.csv`
 - [ ] Conduct 20 user interviews (record & transcribe)
 - [ ] Analyze interview data, identify patterns
-- [ ] Create user personas (3-5 personas)
+- [x] Create user personas (3-5 personas) — see docs/user-personas.md
 - [ ] Document pain points and desired features
    - [x] Notes template prepared — see `docs/user-research-notes-template.md`
 
