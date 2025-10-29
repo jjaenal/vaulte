@@ -14,7 +14,7 @@
 
 **User Research**
 
-- [ ] Create user interview script (15 questions about data privacy)
+- [x] Create user interview script (15 questions about data privacy) — see `docs/user-interview-script.md`
 - [ ] Recruit 20 potential users via Reddit, Twitter, privacy forums
 - [ ] Conduct 20 user interviews (record & transcribe)
 - [ ] Analyze interview data, identify patterns
