@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <!-- Definitions moved to top for broader renderer compatibility -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#000" />
+    </marker>
+  </defs>
   <!-- Background -->
   <rect width="800" height="600" fill="#f8f9fa" />
   
@@ -97,14 +103,9 @@
   
   <!-- Arrow Data Access to Buyer -->
   <line x1="500" y1="460" x2="650" y2="140" stroke="#000" stroke-width="2" marker-end="url(#arrowhead)" />
-  <text x="580" y="380" font-family="Arial" font-size="12" text-anchor="middle">13. Decrypt & Access Data</text>
+  <text x="580" y="380" font-family="Arial" font-size="12" text-anchor="middle">13. Decrypt &amp; Access Data</text>
   
-  <!-- Arrowhead definition -->
-  <defs>
-    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#000" />
-    </marker>
-  </defs>
+  
   
   <!-- Legend -->
   <rect x="50" y="520" width="15" height="15" fill="#e3f2fd" stroke="#2196f3" stroke-width="1" />
