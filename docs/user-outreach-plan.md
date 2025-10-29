@@ -40,13 +40,13 @@ Hi all — we’re building Vaulté, a privacy‑first marketplace where individ
 Thanks for helping us design a safer, fairer data future!
 
 ### Twitter/X DM
-Hi <name>, we’re researching a privacy‑first data marketplace (Vaulté). Would you be open to a 30‑minute chat on data ownership and privacy? $10 gift card as a thank‑you. You can book a time here: <booking-link>. Thanks!
+Hi <name>, we’re researching a privacy‑first data marketplace (Vaulté). Would you be open to a 30‑minute chat on data ownership and privacy? $10 gift card as a thank‑you. You can book a time here: https://calendly.com/vaulte/30min. Thanks!
 
 ### Discord Message
-Hey everyone — we’re researching user needs for a privacy‑first data marketplace (Vaulté). If you care about data control/privacy, we’d love a 30‑minute chat. $10 gift card. Book here: <booking-link>. DMs welcome!
+Hey everyone — we’re researching user needs for a privacy‑first data marketplace (Vaulté). If you care about data control/privacy, we’d love a 30‑minute chat. $10 gift card. Book here: https://calendly.com/vaulte/30min. DMs welcome!
 
 ### Follow‑Up (2–3 days later)
-Just following up in case you missed this — would you be open to a quick 30‑minute chat? Booking link: <booking-link>. Appreciate it!
+Just following up in case you missed this — would you be open to a quick 30‑minute chat? Booking link: https://calendly.com/vaulte/30min. Appreciate it!
 
 ## Scheduling & Tools
 - Booking: Calendly/Google Calendar (<booking-link>)

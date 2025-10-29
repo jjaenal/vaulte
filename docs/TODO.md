@@ -17,10 +17,13 @@
 - [x] Create user interview script (15 questions about data privacy) — see `docs/user-interview-script.md`
 - [ ] Recruit 20 potential users via Reddit, Twitter, privacy forums
    - [x] Outreach plan and templates prepared — see `docs/user-outreach-plan.md`
+   - [x] Booking link added — https://calendly.com/vaulte/30min
+   - [x] Tracking sheet template — see `docs/user-outreach-tracking.csv`
 - [ ] Conduct 20 user interviews (record & transcribe)
 - [ ] Analyze interview data, identify patterns
 - [ ] Create user personas (3-5 personas)
 - [ ] Document pain points and desired features
+   - [x] Notes template prepared — see `docs/user-research-notes-template.md`
 
 **Buyer Research**
 
