@@ -5,6 +5,12 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useToast } from '@/components/ui/ToastProvider';
 
+type Buyer = {
+  name: string;
+  lastPurchase: string;
+  status: 'active' | 'paused' | 'pending';
+};
+
 type Category = {
   id: number;
   name: string;
@@ -13,6 +19,8 @@ type Category = {
   activeBuyers: number;
   estimatedMonthly: number; // ETH
   icon?: string;
+  buyers?: Buyer[];
+  sampleFields?: string[];
 };
 
 export default function VaultPage() {
@@ -21,10 +29,59 @@ export default function VaultPage() {
 
   const initialCategories = useMemo<Category[]>(
     () => [
-      { id: 1, name: 'Fitness Data', pricePerDay: 0.05, enabled: true, activeBuyers: 3, estimatedMonthly: 1.5, icon: '🏋️' },
-      { id: 2, name: 'Location History', pricePerDay: 0.08, enabled: false, activeBuyers: 1, estimatedMonthly: 0.8, icon: '📍' },
-      { id: 3, name: 'Browsing Activity', pricePerDay: 0.03, enabled: true, activeBuyers: 5, estimatedMonthly: 1.2, icon: '🧭' },
-      { id: 4, name: 'Shopping Habits', pricePerDay: 0.04, enabled: false, activeBuyers: 0, estimatedMonthly: 0.0, icon: '🛍️' },
+      {
+        id: 1,
+        name: 'Fitness Data',
+        pricePerDay: 0.05,
+        enabled: true,
+        activeBuyers: 3,
+        estimatedMonthly: 1.5,
+        icon: '🏋️',
+        buyers: [
+          { name: 'HealthCo', lastPurchase: '2025-01-10', status: 'active' },
+          { name: 'WellnessAI', lastPurchase: '2025-01-08', status: 'paused' },
+          { name: 'FitLabs', lastPurchase: '2025-01-02', status: 'active' },
+        ],
+        sampleFields: ['Steps', 'Heart Rate', 'Calories', 'Sleep Duration'],
+      },
+      {
+        id: 2,
+        name: 'Location History',
+        pricePerDay: 0.08,
+        enabled: false,
+        activeBuyers: 1,
+        estimatedMonthly: 0.8,
+        icon: '📍',
+        buyers: [
+          { name: 'MapSense', lastPurchase: '2025-01-11', status: 'pending' },
+        ],
+        sampleFields: ['Latitude', 'Longitude', 'Timestamp', 'Accuracy'],
+      },
+      {
+        id: 3,
+        name: 'Browsing Activity',
+        pricePerDay: 0.03,
+        enabled: true,
+        activeBuyers: 5,
+        estimatedMonthly: 1.2,
+        icon: '🧭',
+        buyers: [
+          { name: 'AdAnalytics', lastPurchase: '2025-01-12', status: 'active' },
+          { name: 'MarketIntel', lastPurchase: '2025-01-07', status: 'active' },
+        ],
+        sampleFields: ['URL', 'Referrer', 'Session Length', 'Device'],
+      },
+      {
+        id: 4,
+        name: 'Shopping Habits',
+        pricePerDay: 0.04,
+        enabled: false,
+        activeBuyers: 0,
+        estimatedMonthly: 0.0,
+        icon: '🛍️',
+        buyers: [],
+        sampleFields: ['Product', 'Category', 'Spend', 'Frequency'],
+      },
     ], []
   );
 
@@ -94,14 +151,18 @@ export default function VaultPage() {
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Your Data Categories</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {categories.map((cat) => (
-              <div key={cat.id} className="bg-white shadow rounded-lg p-6">
+              <div
+                key={cat.id}
+                className="bg-white shadow rounded-lg p-6 cursor-pointer hover:shadow-md transition-shadow"
+                onClick={() => openModal(cat)}
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-xl" aria-hidden="true">{cat.icon ?? '📁'}</span>
                     <h3 className="text-sm font-semibold text-gray-900">{cat.name}</h3>
                   </div>
                   <button
-                    onClick={() => toggleCategory(cat.id)}
+                    onClick={(e) => { e.stopPropagation(); toggleCategory(cat.id); }}
                     className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${
                       cat.enabled ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
                     }`}
@@ -125,7 +186,7 @@ export default function VaultPage() {
                 </div>
                 <div className="mt-5 flex items-center gap-3">
                   <button
-                    onClick={() => openModal(cat)}
+                    onClick={(e) => { e.stopPropagation(); openModal(cat); }}
                     className="inline-flex items-center rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-black"
                   >
                     Edit
@@ -145,11 +206,36 @@ export default function VaultPage() {
         {/* Category Detail Modal */}
         {isModalOpen && selectedCategory && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-            <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-              <h3 className="text-lg font-semibold text-gray-900">Edit Category</h3>
-              <p className="mt-1 text-xs text-gray-500">{selectedCategory.name}</p>
+            <div className="w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Category Details</h3>
+                  <p className="mt-1 text-xs text-gray-500">{selectedCategory.name}</p>
+                </div>
+                <span className="text-2xl" aria-hidden="true">{selectedCategory.icon ?? '📁'}</span>
+              </div>
+
+              {/* Summary */}
+              <div className="mt-4 grid grid-cols-3 gap-3">
+                <div className="rounded-md border bg-white p-3">
+                  <p className="text-xs text-gray-500">Current price</p>
+                  <p className="text-sm font-semibold text-gray-900">{selectedCategory.pricePerDay} ETH/day</p>
+                </div>
+                <div className="rounded-md border bg-white p-3">
+                  <p className="text-xs text-gray-500">Status</p>
+                  <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${selectedCategory.enabled ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>
+                    {selectedCategory.enabled ? 'Enabled' : 'Disabled'}
+                  </span>
+                </div>
+                <div className="rounded-md border bg-white p-3">
+                  <p className="text-xs text-gray-500">Active buyers</p>
+                  <p className="text-sm font-semibold text-gray-900">{selectedCategory.activeBuyers}</p>
+                </div>
+              </div>
+
+              {/* Edit price */}
               <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700">Price (ETH/day)</label>
+                <label className="block text-sm font-medium text-gray-700">Set new price (ETH/day)</label>
                 <input
                   type="number"
                   step="0.001"
@@ -159,19 +245,110 @@ export default function VaultPage() {
                   className="mt-1 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-purple-600 sm:text-sm sm:leading-6"
                 />
               </div>
-              <div className="mt-6 flex items-center justify-end gap-3">
-                <button
-                  onClick={() => setIsModalOpen(false)}
-                  className="inline-flex items-center rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={saveCategory}
-                  className="inline-flex items-center rounded-md bg-purple-600 px-3 py-2 text-sm font-medium text-white hover:bg-purple-700"
-                >
-                  Save
-                </button>
+
+              {/* Data preview */}
+              <div className="mt-6">
+                <p className="text-sm font-semibold text-gray-900">Data Preview</p>
+                <ul className="mt-2 grid grid-cols-2 gap-2">
+                  {(selectedCategory.sampleFields ?? []).map((f) => (
+                    <li key={f} className="flex items-center gap-2 text-xs text-gray-700">
+                      <span className="h-4 w-4 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center">✓</span>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Connected sources */}
+              <div className="mt-6">
+                <p className="text-sm font-semibold text-gray-900">Connected Sources</p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {(() => {
+                    const sourcesMap: Record<string, string[]> = {
+                      'Fitness Data': ['Google Fit', 'Strava'],
+                      'Location History': ['Android Location'],
+                      'Browsing Activity': ['Browser Extension'],
+                      'Shopping Habits': ['Email Receipts'],
+                    };
+                    const list = sourcesMap[selectedCategory.name] ?? [];
+                    return list.length === 0 ? (
+                      <span className="text-xs text-gray-500">No sources connected</span>
+                    ) : (
+                      list.map((s) => (
+                        <span key={s} className="inline-flex items-center rounded-full bg-indigo-100 px-2 py-1 text-[11px] font-medium text-indigo-700">
+                          {s}
+                        </span>
+                      ))
+                    );
+                  })()}
+                </div>
+              </div>
+
+              {/* Buyers list */}
+              <div className="mt-6">
+                <p className="text-sm font-semibold text-gray-900">Recent Buyers</p>
+                <div className="mt-2 divide-y rounded-md border">
+                  {(selectedCategory.buyers ?? []).length === 0 ? (
+                    <p className="p-3 text-xs text-gray-500">No buyers yet</p>
+                  ) : (
+                    (selectedCategory.buyers ?? []).map((b) => (
+                      <div key={`${b.name}-${b.lastPurchase}`} className="flex items-center justify-between p-3">
+                        <div>
+                          <p className="text-xs font-medium text-gray-900">{b.name}</p>
+                          <p className="text-[11px] text-gray-500">Last purchase: {b.lastPurchase}</p>
+                        </div>
+                        <span className={`inline-flex items-center rounded-full px-2 py-1 text-[11px] font-medium ${
+                          b.status === 'active'
+                            ? 'bg-green-100 text-green-700'
+                            : b.status === 'paused'
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : 'bg-gray-100 text-gray-700'
+                        }`}>
+                          {b.status}
+                        </span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => {
+                      // toggle only selected category
+                      setCategories((prev) => prev.map((c) => (c.id === selectedCategory.id ? { ...c, enabled: !c.enabled } : c)));
+                      setSelectedCategory((prev) => (prev ? { ...prev, enabled: !prev.enabled } : prev));
+                      showToast(`${selectedCategory.name} ${selectedCategory.enabled ? 'disabled' : 'enabled'}`, 'success');
+                    }}
+                    className={`inline-flex items-center rounded-md px-3 py-2 text-sm font-medium ${
+                      selectedCategory.enabled ? 'bg-gray-100 text-gray-800 hover:bg-gray-200' : 'bg-green-600 text-white hover:bg-green-700'
+                    }`}
+                  >
+                    {selectedCategory.enabled ? 'Disable' : 'Enable'}
+                  </button>
+                  <Link
+                    href="/marketplace"
+                    className="inline-flex items-center rounded-md bg-purple-600 px-3 py-2 text-sm font-medium text-white hover:bg-purple-700"
+                  >
+                    View Requests
+                  </Link>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setIsModalOpen(false)}
+                    className="inline-flex items-center rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
+                  >
+                    Close
+                  </button>
+                  <button
+                    onClick={saveCategory}
+                    className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+                  >
+                    Save Changes
+                  </button>
+                </div>
               </div>
             </div>
           </div>

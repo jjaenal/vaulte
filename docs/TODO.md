@@ -906,7 +906,7 @@ vaulte-contracts/
 **Page 3: Data Vault (app/vault/page.tsx)**
 
 ```typescript
-- [ ] Data Categories Grid
+- [x] Data Categories Grid
       - Card for each category (Fitness, Location, Browsing, Shopping)
       - Enable/disable toggle
       - Current price display
@@ -914,7 +914,7 @@ vaulte-contracts/
       - Number of active buyers
       - Icon for category
 
-- [ ] Category Detail Modal
+- [x] Category Detail Modal
       - Opens on card click
       - Edit price input
       - Data preview (anonymized)
@@ -926,23 +926,6 @@ vaulte-contracts/
       - Available integrations grid
       - OAuth connection buttons
       - Connection status indicators
-```
-
-```typescript
-- [x] Data Categories Grid
-      - Card for each category (Fitness, Location, Browsing, Shopping)
-      - Enable/disable toggle
-      - Current price display
-      - Estimated monthly earnings
-      - Number of active buyers
-      - Icon for category
-- [x] Category Detail Modal (basic)
-      - Opens on card click
-      - Edit price input
-      - Save changes button
-- [x] Connect Data Source Section (basic)
-      - Available integrations grid
-      - Connect buttons linking to /integrations
 ```
 
 **Page 4: Marketplace (app/marketplace/page.tsx)**
