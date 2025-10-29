@@ -102,6 +102,29 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+          {(() => {
+            const totalEarnings = earnings.reduce((sum, e) => sum + e.amount, 0);
+            const activeBuyers = new Set(earnings.map((e) => e.buyer)).size;
+            const enabledCategories = myData.filter((d) => d.active).length;
+            const privacyScore = 85; // Placeholder score
+            const cards = [
+              { title: 'Total Earnings', value: `${totalEarnings} ETH`, subtitle: 'Last 30 days' },
+              { title: 'Active Buyers', value: activeBuyers.toString(), subtitle: 'Currently engaging' },
+              { title: 'Enabled Categories', value: enabledCategories.toString(), subtitle: 'Live for sale' },
+              { title: 'Privacy Score', value: `${privacyScore}/100`, subtitle: 'Based on settings' },
+            ];
+            return cards.map((card) => (
+              <div key={card.title} className="bg-white shadow rounded-lg p-6">
+                <h3 className="text-sm font-semibold text-gray-900">{card.title}</h3>
+                <p className="mt-2 text-2xl font-bold text-gray-900">{card.value}</p>
+                <p className="mt-1 text-xs text-gray-500">{card.subtitle}</p>
+              </div>
+            ));
+          })()}
+        </div>
+
         {/* Wallet Info */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white shadow rounded-lg p-6">
