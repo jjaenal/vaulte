@@ -885,6 +885,13 @@ vaulte-contracts/
       - Enable new data category button
       - View requests button
       - Connect data source button
+```
+
+```typescript
+- [x] Quick Actions
+      - Enable new data category button
+      - View requests button
+      - Connect data source button
 
 - [x] Earnings Chart
       - Last 30 days earnings

@@ -2,6 +2,7 @@
 
 import { useAccount, useBalance, useDisconnect } from 'wagmi';
 import { useState, useEffect, useMemo } from 'react';
+import Link from 'next/link';
 import RegisterDataForm from '@/components/dashboard/RegisterDataForm';
 import { useDataVault } from '@/hooks/useDataVault';
 import { useToast } from '@/components/ui/ToastProvider';
@@ -187,6 +188,36 @@ export default function Dashboard() {
                 Disconnect
               </button>
             </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="bg-white shadow rounded-lg p-6 mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900">Quick Actions</h3>
+              <p className="mt-1 text-xs text-gray-500">Jump into common workflows</p>
+            </div>
+          </div>
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <Link
+              href="/vault"
+              className="inline-flex items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+            >
+              Enable Data Category
+            </Link>
+            <Link
+              href="/marketplace"
+              className="inline-flex items-center justify-center rounded-md bg-purple-600 px-3 py-2 text-sm font-medium text-white hover:bg-purple-700"
+            >
+              View Requests
+            </Link>
+            <Link
+              href="/integrations"
+              className="inline-flex items-center justify-center rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-black"
+            >
+              Connect Data Source
+            </Link>
           </div>
         </div>
 
