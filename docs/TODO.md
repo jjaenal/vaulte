@@ -15,29 +15,29 @@
 **User Research**
 
 - [x] Create user interview script (15 questions about data privacy) — see `docs/user-interview-script.md`
- - [ ] Recruit 20 potential users via Reddit, Twitter, privacy forums
-   - [x] Outreach plan and templates prepared — see `docs/user-outreach-plan.md`
-   - [x] Booking link added — https://calendly.com/vaulte/30min
-   - [x] Tracking sheet template — see `docs/user-outreach-tracking.csv`
-   - [x] A/B templates prepared — see `docs/outreach-ab-templates.md`
-   - [x] Posting schedule prepared — see `docs/outreach-calendar.md`
-   - [x] Outreach plan and templates prepared — see `docs/user-outreach-plan.md`
-   - [x] Booking link added — https://calendly.com/vaulte/30min
-   - [x] Tracking sheet template — see `docs/user-outreach-tracking.csv`
+- [ ] Recruit 20 potential users via Reddit, Twitter, privacy forums
+  - [x] Outreach plan and templates prepared — see `docs/user-outreach-plan.md`
+  - [x] Booking link added — https://calendly.com/vaulte/30min
+  - [x] Tracking sheet template — see `docs/user-outreach-tracking.csv`
+  - [x] A/B templates prepared — see `docs/outreach-ab-templates.md`
+  - [x] Posting schedule prepared — see `docs/outreach-calendar.md`
+  - [x] Outreach plan and templates prepared — see `docs/user-outreach-plan.md`
+  - [x] Booking link added — https://calendly.com/vaulte/30min
+  - [x] Tracking sheet template — see `docs/user-outreach-tracking.csv`
 - [ ] Conduct 20 user interviews (record & transcribe)
 - [ ] Analyze interview data, identify patterns
 - [x] Create user personas (3-5 personas) — see docs/user-personas.md
 - [ ] Document pain points and desired features
-   - [x] Notes template prepared — see `docs/user-research-notes-template.md`
+  - [x] Notes template prepared — see `docs/user-research-notes-template.md`
 
 **Buyer Research**
 
- - [x] Create buyer survey (10 questions about data needs) — see `docs/buyer-survey.md`
+- [x] Create buyer survey (10 questions about data needs) — see `docs/buyer-survey.md`
 - [x] Identify 10 potential buyers (researchers, agencies) — see docs/potential-buyers-list.md
- - [ ] Reach out to buyers for 30-min calls — see docs/outreach-ab-templates.md & docs/buyer-call-outreach-templates.md & docs/outreach-calendar.md
- - [ ] Conduct 10 buyer interviews — see docs/buyer-interview-script.md
+- [ ] Reach out to buyers for 30-min calls — see docs/outreach-ab-templates.md & docs/buyer-call-outreach-templates.md & docs/outreach-calendar.md & docs/outreach-personalized-drafts.md & docs/buyer-onepager.md
+- [ ] Conduct 10 buyer interviews — see docs/buyer-interview-script.md
 - [x] Analyze willingness to pay and data preferences — see docs/pricing-analysis-framework.md & docs/data-preferences-methodology.md
- - [x] Document buyer personas — see docs/buyer-personas.md
+- [x] Document buyer personas — see docs/buyer-personas.md
 
 **Competitive Analysis**
 
@@ -702,28 +702,28 @@ vaulte-contracts/
 
 **Encryption Layer**
 
- - [ ] Install crypto: `npm install crypto-js`
- - [x] Create encryption utility functions:
-   - [x] generateKey() - derive key from user password/signature
-   - [x] encrypt(data, key) - AES-256 encryption
-   - [x] decrypt(data, key) - AES-256 decryption
- - [ ] Implement key management (user-controlled keys)
- - [x] Test encryption/decryption with sample data
- - [ ] Benchmark encryption performance (target: <100ms for 1MB)
+- [ ] Install crypto: `npm install crypto-js`
+- [x] Create encryption utility functions:
+  - [x] generateKey() - derive key from user password/signature
+  - [x] encrypt(data, key) - AES-256 encryption
+  - [x] decrypt(data, key) - AES-256 decryption
+- [ ] Implement key management (user-controlled keys)
+- [x] Test encryption/decryption with sample data
+- [ ] Benchmark encryption performance (target: <100ms for 1MB)
 
 **Middleware**
 
- - [x] Authentication middleware (verify JWT)
- - [x] Rate limiting middleware (express-rate-limit)
- - [x] CORS configuration
- - [x] Request logging (morgan)
- - [x] Error handling middleware
+- [x] Authentication middleware (verify JWT)
+- [x] Rate limiting middleware (express-rate-limit)
+- [x] CORS configuration
+- [x] Request logging (morgan)
+- [x] Error handling middleware
 
 **API Documentation**
 
- - [x] Integrate Swagger UI at `/api-docs`
- - [x] Add `src/docs/swagger.yaml` covering DataVault/Marketplace endpoints
- - [ ] Input validation middleware (express-validator)
+- [x] Integrate Swagger UI at `/api-docs`
+- [x] Add `src/docs/swagger.yaml` covering DataVault/Marketplace endpoints
+- [ ] Input validation middleware (express-validator)
 
 **Testing**
 
