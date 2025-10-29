@@ -36,7 +36,7 @@
 - [ ] Identify 10 potential buyers (researchers, agencies)
 - [ ] Reach out to buyers for 30-min calls
 - [ ] Conduct 10 buyer interviews
-- [ ] Analyze willingness to pay and data preferences
+- [x] Analyze willingness to pay and data preferences — see docs/pricing-analysis-framework.md & docs/data-preferences-methodology.md
 - [ ] Document buyer personas
 
 **Competitive Analysis**
