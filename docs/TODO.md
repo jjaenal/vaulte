@@ -897,7 +897,7 @@ vaulte-contracts/
       - Connected data sources
       - Timestamps
 
-- [ ] Wallet Info
+- [x] Wallet Info
       - Connected wallet address
       - Balance display
       - Disconnect button
