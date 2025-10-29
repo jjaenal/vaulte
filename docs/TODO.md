@@ -875,7 +875,7 @@ vaulte-contracts/
 **Page 2: Dashboard (app/dashboard/page.tsx)**
 
 ```typescript
-- [ ] Stats Overview
+- [x] Stats Overview
       - Total earnings card
       - Active buyers card
       - Data categories enabled card
@@ -886,7 +886,7 @@ vaulte-contracts/
       - View requests button
       - Connect data source button
 
-- [ ] Earnings Chart
+- [x] Earnings Chart
       - Last 30 days earnings
       - Line chart with recharts
       - Hover tooltips

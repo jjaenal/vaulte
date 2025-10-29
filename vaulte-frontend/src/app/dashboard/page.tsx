@@ -1,10 +1,11 @@
 'use client';
 
 import { useAccount, useBalance, useDisconnect } from 'wagmi';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import RegisterDataForm from '@/components/dashboard/RegisterDataForm';
 import { useDataVault } from '@/hooks/useDataVault';
 import { useToast } from '@/components/ui/ToastProvider';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 export default function Dashboard() {
   const { address, isConnected } = useAccount();
@@ -31,10 +32,24 @@ export default function Dashboard() {
     { id: 102, buyer: '0x8765...4321', categoryName: 'Health Records', duration: 7, totalPrice: 0.7, status: 'approved' },
   ];
   
-  const earnings = [
+  const earnings = useMemo(() => ([
     { id: 201, buyer: '0x8765...4321', categoryName: 'Health Records', amount: 0.7, date: '2025-01-15' },
     { id: 202, buyer: '0x5432...9876', categoryName: 'Fitness Data', amount: 1.2, date: '2025-01-10' },
-  ];
+  ]), []);
+
+  // Transform earnings to chart data (last 30 days placeholder)
+  const earningsChartData = useMemo(() => {
+    // Simple grouping by date
+    const map = new Map<string, number>();
+    for (const e of earnings) {
+      const key = e.date;
+      map.set(key, (map.get(key) ?? 0) + e.amount);
+    }
+    const sorted = Array.from(map.entries())
+      .sort((a, b) => (a[0] < b[0] ? -1 : 1))
+      .map(([date, amount]) => ({ date, amount }));
+    return sorted;
+  }, [earnings]);
   
   // Fetch data categories when user is connected
   useEffect(() => {
@@ -142,6 +157,27 @@ export default function Dashboard() {
                 Disconnect
               </button>
             </div>
+          </div>
+        </div>
+
+        {/* Earnings Chart */}
+        <div className="bg-white shadow rounded-lg p-6 mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900">Earnings (Last 30 Days)</h3>
+              <p className="mt-1 text-xs text-gray-500">Aggregated per day</p>
+            </div>
+          </div>
+          <div className="mt-4 h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={earningsChartData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 12 }} />
+                <Tooltip formatter={(value: number) => `${value} ETH`} labelFormatter={(label) => `Date: ${label}`} />
+                <Line type="monotone" dataKey="amount" stroke="#7c3aed" strokeWidth={2} dot={false} />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
