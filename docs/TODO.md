@@ -52,11 +52,12 @@
 
 **Validation**
 
-- [ ] Create landing page with email signup (Carrd/Webflow)
+- [x] Create landing page with email signup — see `validation/index.html` (HTML/CSS with Formspree integration)
+- [x] Plan ad campaign strategy — see `validation/ad-campaign-strategy.md`
 - [ ] Run small ads campaign ($100-200 budget)
 - [ ] Target 100 email signups
-- [ ] Survey signups about willingness to pay
-- [ ] Calculate estimated TAM/SAM/SOM
+- [x] Create survey for signups — see `validation/willingness-to-pay-survey.md`
+- [x] Calculate estimated TAM/SAM/SOM — see `validation/market-size-analysis.md`
 
 ### Week 3-4: Technical Architecture
 

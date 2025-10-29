@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vaulté - Your Data, Elevated</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>Vaulté</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#benefits">Benefits</a></li>
+                    <li><a href="#signup" class="btn-secondary">Join Waitlist</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Your Data, <span class="highlight">Elevated</span></h1>
+                <p class="subtitle">Monetize your personal data while maintaining full control and privacy.</p>
+                <p class="description">Vaulté empowers individuals to sell their data directly to buyers through a decentralized marketplace, cutting out middlemen and ensuring transparency.</p>
+                <div class="cta-buttons">
+                    <a href="#signup" class="btn-primary">Join Waitlist</a>
+                    <a href="#how-it-works" class="btn-outline">Learn More</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#6C63FF;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#8A84FF;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <rect x="100" y="50" width="300" height="300" rx="20" fill="url(#gradient1)" opacity="0.1"/>
+                    <circle cx="250" cy="200" r="120" fill="url(#gradient1)" opacity="0.2"/>
+                    <path d="M180,170 L320,170 L320,230 L180,230 Z" fill="#6C63FF" opacity="0.8"/>
+                    <path d="M200,140 L300,140 L300,160 L200,160 Z" fill="#6C63FF" opacity="0.6"/>
+                    <path d="M200,240 L300,240 L300,260 L200,260 Z" fill="#6C63FF" opacity="0.6"/>
+                    <circle cx="160" cy="200" r="15" fill="#6C63FF"/>
+                    <circle cx="340" cy="200" r="15" fill="#6C63FF"/>
+                </svg>
+            </div>
+        </section>
+
+        <section id="how-it-works" class="how-it-works">
+            <h2>How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-icon">1</div>
+                    <h3>Connect & Upload</h3>
+                    <p>Connect your wallet and upload your encrypted data to our secure platform.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">2</div>
+                    <h3>Set Your Terms</h3>
+                    <p>Define your pricing, access duration, and usage permissions.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon">3</div>
+                    <h3>Earn Revenue</h3>
+                    <p>Buyers purchase access to your data, and you receive 90% of all payments.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="benefits" class="benefits">
+            <h2>Why Choose Vaulté?</h2>
+            <div class="benefits-grid">
+                <div class="benefit">
+                    <div class="benefit-icon">🔒</div>
+                    <h3>Privacy-First</h3>
+                    <p>End-to-end encryption and zero-knowledge proofs ensure your data remains secure.</p>
+                </div>
+                <div class="benefit">
+                    <div class="benefit-icon">💰</div>
+                    <h3>Fair Monetization</h3>
+                    <p>90% of revenue goes directly to data owners, with only 10% platform fee.</p>
+                </div>
+                <div class="benefit">
+                    <div class="benefit-icon">⚡</div>
+                    <h3>Fast Transactions</h3>
+                    <p>Built on Polygon for low gas fees and quick settlement.</p>
+                </div>
+                <div class="benefit">
+                    <div class="benefit-icon">🌍</div>
+                    <h3>Transparent</h3>
+                    <p>All transactions are on-chain and fully verifiable.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="signup" class="signup">
+            <h2>Join Our Waitlist</h2>
+            <p>Be among the first to monetize your data on your own terms.</p>
+            <form id="signup-form" action="https://formspree.io/f/xpzvgkrw" method="POST">
+                <div class="form-group">
+                    <input type="email" name="email" placeholder="Your email address" required>
+                    <button type="submit" class="btn-primary">Join Waitlist</button>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="consent" name="consent" required>
+                    <label for="consent">I agree to receive updates about Vaulté</label>
+                </div>
+            </form>
+            <p class="privacy-note">We respect your privacy and will never share your information.</p>
+        </section>
+
+        <footer>
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>Vaulté</h2>
+                    <p>Your data, elevated</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h3>Product</h3>
+                        <ul>
+                            <li><a href="#how-it-works">How It Works</a></li>
+                            <li><a href="#benefits">Benefits</a></li>
+                            <li><a href="#signup">Join Waitlist</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Connect</h3>
+                        <ul>
+                            <li><a href="https://twitter.com/vaulte_io" target="_blank">Twitter</a></li>
+                            <li><a href="https://discord.gg/vaulte" target="_blank">Discord</a></li>
+                            <li><a href="mailto:hello@vaulte.io">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Vaulté. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('signup-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            const email = form.email.value;
+            
+            fetch(form.action, {
+                method: form.method,
+                body: new FormData(form),
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    form.reset();
+                    alert('Thank you for joining our waitlist! We\'ll be in touch soon.');
+                } else {
+                    throw new Error('Something went wrong. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(error.message);
+            });
+        });
+    </script>
+</body>
+</html>
