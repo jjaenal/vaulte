@@ -828,7 +828,7 @@ vaulte-contracts/
       - Spinner
       - Skeleton loaders
 
-- [ ] components/ui/Toast.tsx
+- [x] components/ui/Toast.tsx
       - Success, error, info variants
       - Auto-dismiss
 
@@ -1039,15 +1039,15 @@ vaulte-contracts/
 **Web3 Integration**
 
 ```typescript
-- [ ] Create hooks/useDataVault.ts
-      - readContract for getting categories
-      - writeContract for registering category
-      - Watch contract events
+- [x] Create hooks/useDataVault.ts
+      - [x] readContract untuk mendapatkan categories
+      - [x] writeContract untuk register category
+      - [ ] Watch contract events
 
-- [ ] Create hooks/useMarketplace.ts
-      - Request data access function
-      - Approve/reject functions
-      - Get requests function
+- [x] Create hooks/useDataMarketplace.ts
+      - [x] Request data access function
+      - [x] Approve/reject functions
+      - [ ] Get requests function
 
 - [ ] Create hooks/useTransactions.ts
       - Wait for transaction confirmation
@@ -1137,13 +1137,13 @@ vaulte-contracts/
 
 **Bug Fixes & Refinements**
 
-- [ ] Fix any console errors
-- [ ] Fix TypeScript type errors
+- [x] Fix any console errors
+- [x] Fix TypeScript type errors
 - [ ] Improve loading states
 - [ ] Add error boundaries
 - [ ] Improve responsive design (mobile/tablet)
 - [ ] Add animations (framer-motion)
-- [ ] Optimize images (next/image)
+- [x] Optimize images (next/image)
 
 **Performance Optimization**
 
