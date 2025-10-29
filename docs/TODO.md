@@ -34,7 +34,7 @@
 
  - [x] Create buyer survey (10 questions about data needs) — see `docs/buyer-survey.md`
 - [x] Identify 10 potential buyers (researchers, agencies) — see docs/potential-buyers-list.md
- - [ ] Reach out to buyers for 30-min calls — see docs/outreach-ab-templates.md & docs/buyer-call-outreach-templates.md
+ - [ ] Reach out to buyers for 30-min calls — see docs/outreach-ab-templates.md & docs/buyer-call-outreach-templates.md & docs/outreach-calendar.md
  - [ ] Conduct 10 buyer interviews — see docs/buyer-interview-script.md
 - [x] Analyze willingness to pay and data preferences — see docs/pricing-analysis-framework.md & docs/data-preferences-methodology.md
  - [x] Document buyer personas — see docs/buyer-personas.md
