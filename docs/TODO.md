@@ -63,25 +63,25 @@
 
 **Tech Stack Decisions**
 
-- [ ] Research blockchain options (Polygon, Arbitrum, Optimism)
-- [ ] Compare gas fees across chains
-- [ ] Test transaction speeds on testnets
-- [ ] **Decision**: Choose primary blockchain (recommend: Polygon)
-- [ ] Research storage solutions (IPFS, Arweave, Filecoin)
-- [ ] **Decision**: Choose storage layer (recommend: IPFS + Pinata)
-- [ ] Research smart contract frameworks (Hardhat vs Foundry)
-- [ ] **Decision**: Choose framework (recommend: Hardhat)
+- [x] Research blockchain options (Polygon, Arbitrum, Optimism) — see `docs/technical/blockchain-comparison.md`
+- [x] Compare gas fees across chains — see `docs/technical/blockchain-comparison.md`
+- [x] Test transaction speeds on testnets — see `docs/technical/blockchain-comparison.md`
+- [x] **Decision**: Choose primary blockchain (recommend: Polygon)
+- [x] Research storage solutions (IPFS, Arweave, Filecoin) — see `docs/technical/storage-comparison.md`
+- [x] **Decision**: Choose storage layer (recommend: IPFS + Pinata)
+- [x] Research smart contract frameworks (Hardhat vs Foundry)
+- [x] **Decision**: Choose framework (recommend: Hardhat)
 
 **Architecture Design**
 
-- [ ] Create system architecture diagram (use draw.io/Figma)
-- [ ] Design data flow diagram (user → storage → buyer)
-- [ ] Define database schema (PostgreSQL)
-- [ ] Design API architecture (REST endpoints)
-- [ ] Plan encryption strategy (AES-256 + key management)
-- [ ] Design zero-knowledge proof implementation
-- [ ] Document security architecture
-- [ ] Create technical specification document (10-15 pages)
+- [x] Create system architecture diagram — see `docs/technical/system-architecture.svg`
+- [x] Design data flow diagram (user → storage → buyer) — see `docs/technical/data-flow-diagram.svg`
+- [x] Define database schema (PostgreSQL) — see `docs/technical/technical-specification.md`
+- [x] Design API architecture (REST endpoints) — see `docs/technical/technical-specification.md`
+- [x] Plan encryption strategy (AES-256 + key management) — see `docs/technical/encryption-strategy.md`
+- [x] Design zero-knowledge proof implementation — see `docs/technical/encryption-strategy.md`
+- [x] Document security architecture — see `docs/technical/technical-specification.md`
+- [x] Create technical specification document — see `docs/technical/technical-specification.md`
 
 **Project Setup**
 

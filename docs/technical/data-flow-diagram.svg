@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#f8f9fa" />
+  
+  <!-- Title -->
+  <text x="400" y="30" font-family="Arial" font-size="24" text-anchor="middle" font-weight="bold">Vaulté Data Flow Diagram</text>
+  
+  <!-- Actors -->
+  <circle cx="150" cy="100" r="40" fill="#e3f2fd" stroke="#2196f3" stroke-width="2" />
+  <text x="150" y="105" font-family="Arial" font-size="14" text-anchor="middle">Data</text>
+  <text x="150" y="125" font-family="Arial" font-size="14" text-anchor="middle">Owner</text>
+  
+  <circle cx="650" cy="100" r="40" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2" />
+  <text x="650" y="105" font-family="Arial" font-size="14" text-anchor="middle">Data</text>
+  <text x="650" y="125" font-family="Arial" font-size="14" text-anchor="middle">Buyer</text>
+  
+  <!-- Data Registration Flow -->
+  <rect x="300" y="80" width="200" height="60" rx="10" fill="#e8f5e9" stroke="#4caf50" stroke-width="2" />
+  <text x="400" y="115" font-family="Arial" font-size="14" text-anchor="middle">Data Registration</text>
+  
+  <!-- Arrows for Registration -->
+  <line x1="190" y1="100" x2="300" y2="110" stroke="#000" stroke-width="2" marker-end="url(#arrowhead)" />
+  <text x="240" y="90" font-family="Arial" font-size="12" text-anchor="middle">1. Register Data</text>
+  
+  <!-- Encryption Process -->
+  <rect x="100" y="200" width="200" height="60" rx="10" fill="#fff3e0" stroke="#ff9800" stroke-width="2" />
+  <text x="200" y="235" font-family="Arial" font-size="14" text-anchor="middle">Encryption Process</text>
+  
+  <!-- Arrow to Encryption -->
+  <line x1="150" y1="140" x2="150" y2="200" stroke="#000" stroke-width="2" marker-end="url(#arrowhead)" />
+  <text x="180" y="170" font-family="Arial" font-size="12" text-anchor="middle">2. Encrypt Data</text>
+  
+  <!-- IPFS Storage -->
+  <rect x="100" y="320" width="200" height="60" rx="10" fill="#e1f5fe" stroke="#03a9f4" stroke-width="2" />
+  <text x="200" y="355" font-family="Arial" font-size="14" text-anchor="middle">IPFS Storage</text>
+  
+  <!-- Arrow to IPFS -->
+  <line x1="200" y1="260" x2="200" y2="320" stroke="#000" stroke-width="2" marker-end="url(#arrowhead)" />
+  <text x="230" y="290" font-family="Arial" font-size="12" text-anchor="middle">3. Store Encrypted Data</text>
+  
+  <!-- Smart Contract -->
+  <rect x="300" y="200" width="200" height="60" rx="10" fill="#ffebee" stroke="#f44336" stroke-width="2" />
+  <text x="400" y="235" font-family="Arial" font-size="14" text-anchor="middle">Smart Contracts</text>
+  
+  <!-- Arrow Registration to Contract -->
+  <line x1="400" y1="140" x2="400" y2="200" stroke="#000" stroke-width="2" marker-end="url(#arrowhead)" />
+  <text x="430" y="170" font-family="Arial" font-size="12" text-anchor="middle">4. Store Metadata</text>
+  
+  <!-- Arrow IPFS to Contract -->
+  <line x1="300" y1="350" x2="350" y2="260" stroke="#000" stroke-width="2" marker-end="url(#arrowhead)" />
+  <text x="340" y="320" font-family="Arial" font-size="12" text-anchor="middle">5. Store CID</text>
+  
+  <!-- Data Request Flow -->
+  <rect x="500" y="200" width="200" height="60" rx="10" fill="#e8eaf6" stroke="#3f51b5" stroke-width="2" />
+  <text x="600" y="235" font-family="Arial" font-size="14" text-anchor="middle">Data Request</text>
+  
+  <!-- Arrow Buyer to Request -->
+  <line x1="650" y1="140" x2="650" y2="200" stroke="#000" stroke-width="2" marker-end="url(#arrowhead)" />
+  <text x="680" y="170" font-family="Arial" font-size="12" text-anchor="middle">6. Request Access</text>
+  
+  <!-- Arrow Request to Contract -->
+  <line x1="500" y1="230" x2="500" y2="230" stroke="#000" stroke-width="2" marker-end="url(#arrowhead)" />
+  <text x="450" y="220" font-family="Arial" font-size="12" text-anchor="middle">7. Submit Request</text>
+  
+  <!-- Payment Process -->
+  <rect x="500" y="320" width="200" height="60" rx="10" fill="#fce4ec" stroke="#e91e63" stroke-width="2" />
+  <text x="600" y="355" font-family="Arial" font-size="14" text-anchor="middle">Payment Process</text>
+  
+  <!-- Arrow Request to Payment -->
+  <line x1="600" y1="260" x2="600" y2="320" stroke="#000" stroke-width="2" marker-end="url(#arrowhead)" />
+  <text x="630" y="290" font-family="Arial" font-size="12" text-anchor="middle">8. Make Payment</text>
+  
+  <!-- Arrow Payment to Contract -->
+  <line x1="500" y1="350" x2="450" y2="260" stroke="#000" stroke-width="2" marker-end="url(#arrowhead)" />
+  <text x="460" y="320" font-family="Arial" font-size="12" text-anchor="middle">9. Confirm Payment</text>
+  
+  <!-- Key Sharing -->
+  <rect x="300" y="320" width="200" height="60" rx="10" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2" />
+  <text x="400" y="355" font-family="Arial" font-size="14" text-anchor="middle">Key Sharing</text>
+  
+  <!-- Arrow Contract to Key Sharing -->
+  <line x1="400" y1="260" x2="400" y2="320" stroke="#000" stroke-width="2" marker-end="url(#arrowhead)" />
+  <text x="430" y="290" font-family="Arial" font-size="12" text-anchor="middle">10. Authorize Access</text>
+  
+  <!-- Data Access -->
+  <rect x="300" y="440" width="200" height="60" rx="10" fill="#e0f2f1" stroke="#009688" stroke-width="2" />
+  <text x="400" y="475" font-family="Arial" font-size="14" text-anchor="middle">Data Access</text>
+  
+  <!-- Arrow Key Sharing to Data Access -->
+  <line x1="400" y1="380" x2="400" y2="440" stroke="#000" stroke-width="2" marker-end="url(#arrowhead)" />
+  <text x="430" y="410" font-family="Arial" font-size="12" text-anchor="middle">11. Share Encryption Key</text>
+  
+  <!-- Arrow IPFS to Data Access -->
+  <line x1="200" y1="380" x2="300" y2="460" stroke="#000" stroke-width="2" marker-end="url(#arrowhead)" />
+  <text x="240" y="430" font-family="Arial" font-size="12" text-anchor="middle">12. Retrieve Data</text>
+  
+  <!-- Arrow Data Access to Buyer -->
+  <line x1="500" y1="460" x2="650" y2="140" stroke="#000" stroke-width="2" marker-end="url(#arrowhead)" />
+  <text x="580" y="380" font-family="Arial" font-size="12" text-anchor="middle">13. Decrypt & Access Data</text>
+  
+  <!-- Arrowhead definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#000" />
+    </marker>
+  </defs>
+  
+  <!-- Legend -->
+  <rect x="50" y="520" width="15" height="15" fill="#e3f2fd" stroke="#2196f3" stroke-width="1" />
+  <text x="70" y="532" font-family="Arial" font-size="10" text-anchor="start">Data Owner</text>
+  
+  <rect x="50" y="540" width="15" height="15" fill="#f3e5f5" stroke="#9c27b0" stroke-width="1" />
+  <text x="70" y="552" font-family="Arial" font-size="10" text-anchor="start">Data Buyer</text>
+  
+  <rect x="50" y="560" width="15" height="15" fill="#e8f5e9" stroke="#4caf50" stroke-width="1" />
+  <text x="70" y="572" font-family="Arial" font-size="10" text-anchor="start">Registration Process</text>
+  
+  <rect x="200" y="520" width="15" height="15" fill="#fff3e0" stroke="#ff9800" stroke-width="1" />
+  <text x="220" y="532" font-family="Arial" font-size="10" text-anchor="start">Encryption Process</text>
+  
+  <rect x="200" y="540" width="15" height="15" fill="#e1f5fe" stroke="#03a9f4" stroke-width="1" />
+  <text x="220" y="552" font-family="Arial" font-size="10" text-anchor="start">Storage Layer</text>
+  
+  <rect x="200" y="560" width="15" height="15" fill="#ffebee" stroke="#f44336" stroke-width="1" />
+  <text x="220" y="572" font-family="Arial" font-size="10" text-anchor="start">Smart Contracts</text>
+  
+  <rect x="350" y="520" width="15" height="15" fill="#e8eaf6" stroke="#3f51b5" stroke-width="1" />
+  <text x="370" y="532" font-family="Arial" font-size="10" text-anchor="start">Request Process</text>
+  
+  <rect x="350" y="540" width="15" height="15" fill="#fce4ec" stroke="#e91e63" stroke-width="1" />
+  <text x="370" y="552" font-family="Arial" font-size="10" text-anchor="start">Payment Process</text>
+  
+  <rect x="350" y="560" width="15" height="15" fill="#e0f2f1" stroke="#009688" stroke-width="1" />
+  <text x="370" y="572" font-family="Arial" font-size="10" text-anchor="start">Data Access</text>
+</svg>
