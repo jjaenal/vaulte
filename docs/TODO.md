@@ -32,7 +32,7 @@
 
 **Buyer Research**
 
-- [ ] Create buyer survey (10 questions about data needs)
+ - [x] Create buyer survey (10 questions about data needs) — see `docs/buyer-survey.md`
 - [ ] Identify 10 potential buyers (researchers, agencies)
 - [ ] Reach out to buyers for 30-min calls
 - [ ] Conduct 10 buyer interviews
