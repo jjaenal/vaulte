@@ -1,0 +1,29 @@
+'use client';
+
+import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import '@rainbow-me/rainbowkit/styles.css';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactNode } from 'react';
+import { WagmiProvider } from 'wagmi';
+import { polygon, polygonMumbai } from 'wagmi/chains';
+
+const config = getDefaultConfig({
+  appName: 'Vaulté',
+  projectId: 'YOUR_WALLETCONNECT_PROJECT_ID', // Ganti dengan project ID WalletConnect
+  chains: [polygon, polygonMumbai],
+  ssr: true,
+});
+
+const queryClient = new QueryClient();
+
+export function Web3Provider({ children }: { children: ReactNode }) {
+  return (
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider>
+          {children}
+        </RainbowKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
+  );
+}
