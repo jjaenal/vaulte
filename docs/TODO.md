@@ -1049,18 +1049,22 @@ vaulte-contracts/
 - [x] Create hooks/useDataMarketplace.ts
       - [x] Request data access function
       - [x] Approve/reject functions
-      - [ ] Get requests function
+      - [x] Get requests function (owner/buyer via backend API)
+      - [x] Watch marketplace events (Created/Approved/Rejected)
+      - [x] Cancel request function
 
 - [ ] Create hooks/useTransactions.ts
       - Wait for transaction confirmation
       - Get transaction receipt
       - Handle transaction errors
+      - [x] Basic hook implemented (waitForReceipt, handleTx, error status)
 
 - [ ] Transaction Flow Components
       - TransactionPending modal
       - TransactionSuccess modal
       - TransactionError modal
       - Retry functionality
+      - [x] Basic TransactionModal component (pending/success/error)
 ```
 
 **State Management (Zustand)**
