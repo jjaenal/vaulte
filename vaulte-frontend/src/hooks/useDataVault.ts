@@ -1,4 +1,5 @@
-import { useAccount, useReadContract, useWriteContract } from 'wagmi';
+import { useAccount, useReadContract, useWriteContract, useWatchContractEvent } from 'wagmi';
+import type { Log } from 'viem';
 import { CONTRACT_ADDRESSES, DATA_VAULT_ABI } from '@/constants/contracts';
 import { useToast } from '@/components/ui/use-toast';
 import { useState } from 'react';
@@ -17,6 +18,58 @@ export function useDataVault() {
     args: [address],
     query: {
       enabled: !!address,
+    },
+  });
+
+  // Watcher: DataCategoryUpdated (refetch UI saat harga/nama berubah)
+  useWatchContractEvent({
+    address: CONTRACT_ADDRESSES.dataVault as `0x${string}`,
+    abi: DATA_VAULT_ABI,
+    eventName: 'DataCategoryUpdated',
+    onLogs: (logs: Log[]) => {
+      // Filter hanya event milik user yang sedang login (owner indexed)
+      const related = logs.filter((log) => {
+        const args = (log as unknown as { args?: { owner?: string } }).args;
+        return args?.owner?.toLowerCase?.() === address?.toLowerCase?.();
+      });
+      if (related.length > 0) {
+        toast({ title: 'Category updated', description: 'On-chain update detected. Refreshing...', });
+        refetchCategories();
+      }
+    },
+  });
+
+  // Watcher: DataCategoryRegistered (refetch UI saat kategori baru)
+  useWatchContractEvent({
+    address: CONTRACT_ADDRESSES.dataVault as `0x${string}`,
+    abi: DATA_VAULT_ABI,
+    eventName: 'DataCategoryRegistered',
+    onLogs: (logs: Log[]) => {
+      const related = logs.filter((log) => {
+        const args = (log as unknown as { args?: { owner?: string } }).args;
+        return args?.owner?.toLowerCase?.() === address?.toLowerCase?.();
+      });
+      if (related.length > 0) {
+        toast({ title: 'Category registered', description: 'New category detected. Refreshing...', });
+        refetchCategories();
+      }
+    },
+  });
+
+  // Watcher: DataCategoryDeactivated (refetch UI saat kategori dinonaktifkan)
+  useWatchContractEvent({
+    address: CONTRACT_ADDRESSES.dataVault as `0x${string}`,
+    abi: DATA_VAULT_ABI,
+    eventName: 'DataCategoryDeactivated',
+    onLogs: (logs: Log[]) => {
+      const related = logs.filter((log) => {
+        const args = (log as unknown as { args?: { owner?: string } }).args;
+        return args?.owner?.toLowerCase?.() === address?.toLowerCase?.();
+      });
+      if (related.length > 0) {
+        toast({ title: 'Category deactivated', description: 'Status changed on-chain. Refreshing...', });
+        refetchCategories();
+      }
     },
   });
 
@@ -142,22 +195,26 @@ export function useDataVault() {
 
     setIsLoading(true);
     try {
-      // Untuk toggle, kita perlu memanggil fungsi yang sesuai
-      // Karena tidak ada fungsi toggle langsung, kita bisa menggunakan updateDataCategory
-      // dengan parameter yang sama tapi status active dibalik
-      // Atau jika ada fungsi khusus untuk enable/disable, gunakan itu
-      
-      // Untuk sementara, kita simulasikan dengan toast
-      const newStatus = !currentStatus;
-      
+      if (currentStatus) {
+        // Disable kategori di chain
+        await writeContractAsync({
+          address: CONTRACT_ADDRESSES.dataVault as `0x${string}`,
+          abi: DATA_VAULT_ABI,
+          functionName: 'deactivateDataCategory',
+          args: [BigInt(categoryId)],
+        });
+
+        toast({ title: 'Success', description: 'Category disabled successfully' });
+        refetchCategories();
+        return true;
+      }
+
+      // Jika saat ini nonaktif, belum ada fungsi re-activate di ABI
       toast({
-        title: 'Success',
-        description: `Category ${newStatus ? 'enabled' : 'disabled'} successfully`,
+        title: 'Not supported',
+        description: 'Re-activate category is not supported by contract yet',
       });
-      
-      // Refresh data kategori
-      refetchCategories();
-      return true;
+      return false;
     } catch (error) {
       console.error('Error toggling category:', error);
       toast({
