@@ -239,7 +239,7 @@ export function useDataMarketplace() {
     status: string;
   };
 
-  const getRequests = async (role: 'owner' | 'buyer' = 'owner'): Promise<MarketplaceRequest[] | null> => {
+  const getRequests = async (role: 'owner' | 'buyer' = 'owner'): Promise<MarketplaceRequest[]> => {
     try {
       if (!address) return [];
       const url = role === 'owner' 
@@ -251,8 +251,9 @@ export function useDataMarketplace() {
       return (json?.data || []) as MarketplaceRequest[];
     } catch (error) {
       console.error('Error fetching requests:', error);
+      // Show toast only once to prevent spam
       showToast('Failed to load requests', 'error');
-      return null;
+      return [];
     }
   };
 
