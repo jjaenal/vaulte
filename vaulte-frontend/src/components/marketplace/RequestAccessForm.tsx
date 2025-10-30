@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useDataMarketplace } from '@/hooks/useDataMarketplace';
 import { useToast } from '@/components/ui/ToastProvider';
+import { useTransactions } from '@/hooks/useTransactions';
+import { TransactionModal } from '@/components/tx/TransactionModal';
 
 interface RequestAccessFormProps {
   categoryId: number;
@@ -17,9 +19,10 @@ export default function RequestAccessForm({
 }: RequestAccessFormProps) {
   const [duration, setDuration] = useState(7);
   const [isOpen, setIsOpen] = useState(false);
-  const { getQuote, requestAccess, isLoading } = useDataMarketplace();
+  const { getQuote, requestAccessTx, isLoading } = useDataMarketplace();
   const [totalPrice, setTotalPrice] = useState<number | null>(null);
   const { showToast } = useToast();
+  const { status, hash, handleTx, reset } = useTransactions();
 
   const handleOpen = async () => {
     setIsOpen(true);
@@ -59,14 +62,10 @@ export default function RequestAccessForm({
     e.preventDefault();
     
     try {
-      const success = await requestAccess(categoryId, duration);
-      if (success) {
-        showToast('Access request submitted', 'success');
-        handleClose();
-        onRequestComplete();
-      } else {
-        showToast('Access request failed', 'error');
-      }
+      await handleTx(() => requestAccessTx(categoryId, duration));
+      showToast('Access request submitted', 'success');
+      handleClose();
+      onRequestComplete();
     } catch (error) {
       console.error('Request access error:', error);
       showToast('Access request failed', 'error');
@@ -144,6 +143,13 @@ export default function RequestAccessForm({
           </div>
         </div>
       )}
+
+      <TransactionModal
+        open={status !== 'idle'}
+        status={status}
+        hash={hash}
+        onClose={reset}
+      />
     </>
   );
 }

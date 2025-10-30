@@ -1,14 +1,31 @@
 'use client';
 
 import { useAccount } from 'wagmi';
-import { useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import RequestAccessForm from '@/components/marketplace/RequestAccessForm';
 import { useToast } from '@/components/ui/ToastProvider';
+import { useDataMarketplace } from '@/hooks/useDataMarketplace';
+import { useTransactions } from '@/hooks/useTransactions';
+import { TransactionModal } from '@/components/tx/TransactionModal';
 
 export default function Marketplace() {
   const { address, isConnected } = useAccount();
   const [searchTerm, setSearchTerm] = useState('');
   const { showToast } = useToast();
+  const { getRequests, approveRequestTx, rejectRequestTx, cancelRequestTx } = useDataMarketplace();
+  const { status, hash, handleTx, reset } = useTransactions();
+  const [ownerRequests, setOwnerRequests] = useState<Array<{
+    id: number;
+    buyer: string;
+    seller: string;
+    categoryId: string | number;
+    durationDays: string | number;
+    totalAmount: string | number;
+    status: string;
+  }>>([]);
+  const [buyerRequests, setBuyerRequests] = useState<typeof ownerRequests>([]);
+  const [loadingOwner, setLoadingOwner] = useState(false);
+  const [loadingBuyer, setLoadingBuyer] = useState(false);
   
   // Dummy data untuk tampilan
   const availableData = [
@@ -19,11 +36,26 @@ export default function Marketplace() {
     { id: 5, owner: '0xqrst...7890', name: 'Social Media Usage', description: 'Engagement metrics and content preferences', pricePerDay: 0.04, category: 'Social' },
   ];
   
-  const myRequests = [
-    { id: 101, owner: '0xabcd...1234', categoryName: 'Fitness Data', requestDate: '2025-01-15', duration: 30, totalPrice: 1.5, status: 'pending' },
-    { id: 102, owner: '0xefgh...5678', categoryName: 'Health Records', requestDate: '2025-01-10', duration: 7, totalPrice: 0.7, status: 'approved' },
-    { id: 103, owner: '0xijkl...9012', categoryName: 'Shopping Habits', requestDate: '2025-01-05', duration: 14, totalPrice: 0.42, status: 'rejected' },
-  ];
+  const refreshRequests = useCallback(async () => {
+    if (!isConnected || !address) return;
+    setLoadingOwner(true);
+    setLoadingBuyer(true);
+    try {
+      const owner = await getRequests('owner');
+      const buyer = await getRequests('buyer');
+      setOwnerRequests(owner || []);
+      setBuyerRequests(buyer || []);
+    } catch (err) {
+      console.error('Failed to refresh requests', err);
+    } finally {
+      setLoadingOwner(false);
+      setLoadingBuyer(false);
+    }
+  }, [isConnected, address, getRequests]);
+
+  useEffect(() => {
+    refreshRequests();
+  }, [refreshRequests]);
 
   const filteredData = availableData.filter(item => 
     item.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -33,6 +65,7 @@ export default function Marketplace() {
 
   const handleRequestComplete = () => {
     showToast('Access request submitted', 'success');
+    refreshRequests();
   };
 
   if (!isConnected) {
@@ -113,66 +146,79 @@ export default function Marketplace() {
           </div>
         </div>
 
-        {/* My Requests */}
+        {/* Incoming Requests (Owner) */}
         <div className="mt-12">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">My Access Requests</h2>
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-xl font-semibold text-gray-900">Incoming Requests</h2>
+            <button
+              onClick={refreshRequests}
+              className="rounded-md bg-gray-100 px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-200"
+              disabled={loadingOwner || loadingBuyer}
+            >
+              {loadingOwner || loadingBuyer ? 'Refreshing...' : 'Refresh'}
+            </button>
+          </div>
           <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
             <table className="min-w-full divide-y divide-gray-300">
               <thead className="bg-gray-50">
                 <tr>
-                  <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                    Data Category
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Owner
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Request Date
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Duration
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Total Price
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Status
-                  </th>
-                  <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                    <span className="sr-only">Actions</span>
-                  </th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Request ID</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Buyer</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Category</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Duration</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Total</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
+                  <th className="relative py-3.5 pl-3 pr-4 sm:pr-6"><span className="sr-only">Actions</span></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {myRequests.map((request) => (
-                  <tr key={request.id}>
-                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                      {request.categoryName}
+                {ownerRequests.length === 0 ? (
+                  <tr>
+                    <td className="px-3 py-4 text-sm text-gray-500" colSpan={7}>
+                      {loadingOwner ? 'Loading...' : 'No incoming requests'}
                     </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{request.owner}</td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{request.requestDate}</td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{request.duration} days</td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{request.totalPrice} ETH</td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      <span
-                        className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
-                          request.status === 'approved'
-                            ? 'bg-green-100 text-green-800'
-                            : request.status === 'rejected'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}
-                      >
-                        {request.status}
-                      </span>
-                    </td>
-                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                      {request.status === 'pending' && (
-                        <button className="text-red-600 hover:text-red-900">Cancel</button>
-                      )}
-                      {request.status === 'approved' && (
-                        <button className="text-purple-600 hover:text-purple-900">View Data</button>
-                      )}
+                  </tr>
+                ) : ownerRequests.map((req) => (
+                  <tr key={req.id}>
+                    <td className="px-3 py-4 text-sm text-gray-900">{req.id}</td>
+                    <td className="px-3 py-4 text-sm text-gray-500">{req.buyer}</td>
+                    <td className="px-3 py-4 text-sm text-gray-500">{String(req.categoryId)}</td>
+                    <td className="px-3 py-4 text-sm text-gray-500">{String(req.durationDays)} days</td>
+                    <td className="px-3 py-4 text-sm text-gray-500">{String(req.totalAmount)}</td>
+                    <td className="px-3 py-4 text-sm text-gray-500">{req.status}</td>
+                    <td className="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                      <div className="flex gap-2 justify-end">
+                        <button
+                          className="rounded-md bg-green-600 px-3 py-1.5 text-white text-xs hover:bg-green-700 disabled:opacity-50"
+                          disabled={status === 'pending' || req.status !== 'pending'}
+                          onClick={async () => {
+                            try {
+                              await handleTx(() => approveRequestTx(req.id));
+                              showToast('Request approved', 'success');
+                              refreshRequests();
+                            } catch {
+                              showToast('Failed to approve', 'error');
+                            }
+                          }}
+                        >
+                          Approve
+                        </button>
+                        <button
+                          className="rounded-md bg-red-600 px-3 py-1.5 text-white text-xs hover:bg-red-700 disabled:opacity-50"
+                          disabled={status === 'pending' || req.status !== 'pending'}
+                          onClick={async () => {
+                            try {
+                              await handleTx(() => rejectRequestTx(req.id));
+                              showToast('Request rejected', 'success');
+                              refreshRequests();
+                            } catch {
+                              showToast('Failed to reject', 'error');
+                            }
+                          }}
+                        >
+                          Reject
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -180,6 +226,65 @@ export default function Marketplace() {
             </table>
           </div>
         </div>
+
+        {/* My Requests (Buyer) */}
+        <div className="mt-12">
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">My Access Requests</h2>
+          <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+            <table className="min-w-full divide-y divide-gray-300">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Request ID</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Owner</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Category</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Duration</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Total</th>
+                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
+                  <th className="relative py-3.5 pl-3 pr-4 sm:pr-6"><span className="sr-only">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 bg-white">
+                {buyerRequests.length === 0 ? (
+                  <tr>
+                    <td className="px-3 py-4 text-sm text-gray-500" colSpan={7}>
+                      {loadingBuyer ? 'Loading...' : 'No requests yet'}
+                    </td>
+                  </tr>
+                ) : buyerRequests.map((req) => (
+                  <tr key={req.id}>
+                    <td className="px-3 py-4 text-sm text-gray-900">{req.id}</td>
+                    <td className="px-3 py-4 text-sm text-gray-500">{req.seller}</td>
+                    <td className="px-3 py-4 text-sm text-gray-500">{String(req.categoryId)}</td>
+                    <td className="px-3 py-4 text-sm text-gray-500">{String(req.durationDays)} days</td>
+                    <td className="px-3 py-4 text-sm text-gray-500">{String(req.totalAmount)}</td>
+                    <td className="px-3 py-4 text-sm text-gray-500">{req.status}</td>
+                    <td className="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                      <div className="flex gap-2 justify-end">
+                        <button
+                          className="rounded-md bg-gray-600 px-3 py-1.5 text-white text-xs hover:bg-gray-700 disabled:opacity-50"
+                          disabled={status === 'pending' || req.status !== 'pending'}
+                          onClick={async () => {
+                            try {
+                              await handleTx(() => cancelRequestTx(req.id));
+                              showToast('Request cancelled', 'success');
+                              refreshRequests();
+                            } catch {
+                              showToast('Failed to cancel', 'error');
+                            }
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <TransactionModal open={status !== 'idle'} status={status} hash={hash} onClose={reset} />
       </div>
     </div>
   );

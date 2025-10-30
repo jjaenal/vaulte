@@ -2,7 +2,7 @@ import { useAccount, useWriteContract, useWatchContractEvent } from 'wagmi';
 import { CONTRACT_ADDRESSES, DATA_MARKETPLACE_ABI } from '@/constants/contracts';
 import { useToast } from '@/components/ui/ToastProvider';
 import { useState } from 'react';
-import type { Log } from 'viem';
+import type { Log, Hex } from 'viem';
 
 export function useDataMarketplace() {
   const { address } = useAccount();
@@ -100,6 +100,21 @@ export function useDataMarketplace() {
     }
   };
 
+  // Variant yang mengembalikan tx hash untuk integrasi dengan TransactionModal
+  const requestAccessTx = async (categoryId: number, duration: number): Promise<Hex> => {
+    if (!address) throw new Error('Wallet not connected');
+    const quote = await getQuote(categoryId, duration);
+    if (!quote) throw new Error('Failed to get quote');
+    const txHash = await writeContractAsync({
+      address: CONTRACT_ADDRESSES.dataMarketplace as `0x${string}`,
+      abi: DATA_MARKETPLACE_ABI,
+      functionName: 'requestAccess',
+      args: [BigInt(categoryId), BigInt(duration)],
+      value: BigInt(quote.totalPrice),
+    });
+    return txHash as Hex;
+  };
+
   const approveRequest = async (requestId: number) => {
     if (!address) {
       showToast('Please connect your wallet first', 'error');
@@ -125,6 +140,17 @@ export function useDataMarketplace() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const approveRequestTx = async (requestId: number): Promise<Hex> => {
+    if (!address) throw new Error('Wallet not connected');
+    const txHash = await writeContractAsync({
+      address: CONTRACT_ADDRESSES.dataMarketplace as `0x${string}`,
+      abi: DATA_MARKETPLACE_ABI,
+      functionName: 'approveRequest',
+      args: [BigInt(requestId)],
+    });
+    return txHash as Hex;
   };
 
   const rejectRequest = async (requestId: number) => {
@@ -154,6 +180,17 @@ export function useDataMarketplace() {
     }
   };
 
+  const rejectRequestTx = async (requestId: number): Promise<Hex> => {
+    if (!address) throw new Error('Wallet not connected');
+    const txHash = await writeContractAsync({
+      address: CONTRACT_ADDRESSES.dataMarketplace as `0x${string}`,
+      abi: DATA_MARKETPLACE_ABI,
+      functionName: 'rejectRequest',
+      args: [BigInt(requestId)],
+    });
+    return txHash as Hex;
+  };
+
   const cancelRequest = async (requestId: number) => {
     if (!address) {
       showToast('Please connect your wallet first', 'error');
@@ -179,6 +216,17 @@ export function useDataMarketplace() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const cancelRequestTx = async (requestId: number): Promise<Hex> => {
+    if (!address) throw new Error('Wallet not connected');
+    const txHash = await writeContractAsync({
+      address: CONTRACT_ADDRESSES.dataMarketplace as `0x${string}`,
+      abi: DATA_MARKETPLACE_ABI,
+      functionName: 'cancelRequest',
+      args: [BigInt(requestId)],
+    });
+    return txHash as Hex;
   };
 
   type MarketplaceRequest = {
@@ -211,9 +259,13 @@ export function useDataMarketplace() {
   return {
     getQuote,
     requestAccess,
+    requestAccessTx,
     approveRequest,
+    approveRequestTx,
     rejectRequest,
+    rejectRequestTx,
     cancelRequest,
+    cancelRequestTx,
     getRequests,
     isLoading,
   };
