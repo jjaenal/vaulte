@@ -1042,6 +1042,8 @@ vaulte-contracts/
 - [x] Create hooks/useDataVault.ts
       - [x] readContract untuk mendapatkan categories
       - [x] writeContract untuk register category
+      - [x] writeContract untuk update category (price editing)
+      - [x] writeContract untuk toggle category (enable/disable)
       - [ ] Watch contract events
 
 - [x] Create hooks/useDataMarketplace.ts

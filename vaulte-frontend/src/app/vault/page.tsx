@@ -4,6 +4,7 @@ import { useAccount } from 'wagmi';
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useToast } from '@/components/ui/ToastProvider';
+import { useDataVault } from '@/hooks/useDataVault';
 
 type Buyer = {
   name: string;
@@ -34,6 +35,7 @@ type Category = {
 export default function VaultPage() {
   const { address, isConnected } = useAccount();
   const { showToast } = useToast();
+  const { updateCategory, toggleCategory: toggleCategoryWeb3, isLoading } = useDataVault();
 
   const initialCategories = useMemo<Category[]>(
     () => [
@@ -105,13 +107,15 @@ export default function VaultPage() {
     { name: 'Fitbit', description: 'Fitness tracking', connected: false, oauth: true },
   ]);
 
-  const toggleCategory = (id: number) => {
-    setCategories((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, enabled: !c.enabled } : c))
-    );
+  const toggleCategory = async (id: number) => {
     const cat = categories.find((c) => c.id === id);
-    if (cat) {
-      showToast(`${cat.name} ${cat.enabled ? 'disabled' : 'enabled'}`, 'success');
+    if (!cat) return;
+
+    const success = await toggleCategoryWeb3(id, cat.enabled);
+    if (success) {
+      setCategories((prev) =>
+        prev.map((c) => (c.id === id ? { ...c, enabled: !c.enabled } : c))
+      );
     }
   };
 
@@ -121,16 +125,28 @@ export default function VaultPage() {
     setIsModalOpen(true);
   };
 
-  const saveCategory = () => {
+  const saveCategory = async () => {
     if (!selectedCategory) return;
     const price = Number(editPrice);
     if (Number.isNaN(price) || price <= 0) {
       showToast('Invalid price', 'error');
       return;
     }
-    setCategories((prev) => prev.map((c) => (c.id === selectedCategory.id ? { ...c, pricePerDay: price } : c)));
-    setIsModalOpen(false);
-    showToast('Category updated', 'success');
+
+    // Dummy dataHash for now - in real app, this would come from IPFS
+    const dataHash = '0x0000000000000000000000000000000000000000000000000000000000000000';
+    
+    const success = await updateCategory(
+      selectedCategory.id,
+      selectedCategory.name,
+      price,
+      dataHash
+    );
+
+    if (success) {
+      setCategories((prev) => prev.map((c) => (c.id === selectedCategory.id ? { ...c, pricePerDay: price } : c)));
+      setIsModalOpen(false);
+    }
   };
 
   const connectSource = (name: string) => {
@@ -194,12 +210,13 @@ export default function VaultPage() {
                     <h3 className="text-sm font-semibold text-gray-900">{cat.name}</h3>
                   </div>
                   <button
-                    onClick={(e) => { e.stopPropagation(); toggleCategory(cat.id); }}
+                    onClick={async (e) => { e.stopPropagation(); await toggleCategory(cat.id); }}
+                    disabled={isLoading}
                     className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${
                       cat.enabled ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
-                    }`}
+                    } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
-                    {cat.enabled ? 'Enabled' : 'Disabled'}
+                    {isLoading ? 'Processing...' : cat.enabled ? 'Enabled' : 'Disabled'}
                   </button>
                 </div>
                 <div className="mt-4">
@@ -348,17 +365,19 @@ export default function VaultPage() {
               <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <button
-                    onClick={() => {
-                      // toggle only selected category
-                      setCategories((prev) => prev.map((c) => (c.id === selectedCategory.id ? { ...c, enabled: !c.enabled } : c)));
-                      setSelectedCategory((prev) => (prev ? { ...prev, enabled: !prev.enabled } : prev));
-                      showToast(`${selectedCategory.name} ${selectedCategory.enabled ? 'disabled' : 'enabled'}`, 'success');
+                    onClick={async () => {
+                      const success = await toggleCategoryWeb3(selectedCategory.id, selectedCategory.enabled);
+                      if (success) {
+                        setCategories((prev) => prev.map((c) => (c.id === selectedCategory.id ? { ...c, enabled: !c.enabled } : c)));
+                        setSelectedCategory((prev) => (prev ? { ...prev, enabled: !prev.enabled } : prev));
+                      }
                     }}
+                    disabled={isLoading}
                     className={`inline-flex items-center rounded-md px-3 py-2 text-sm font-medium ${
                       selectedCategory.enabled ? 'bg-gray-100 text-gray-800 hover:bg-gray-200' : 'bg-green-600 text-white hover:bg-green-700'
-                    }`}
+                    } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
-                    {selectedCategory.enabled ? 'Disable' : 'Enable'}
+                    {isLoading ? 'Processing...' : selectedCategory.enabled ? 'Disable' : 'Enable'}
                   </button>
                   <Link
                     href="/marketplace"
@@ -376,9 +395,14 @@ export default function VaultPage() {
                   </button>
                   <button
                     onClick={saveCategory}
-                    className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+                    disabled={isLoading || editPrice === String(selectedCategory.pricePerDay)}
+                    className={`inline-flex items-center rounded-md px-3 py-2 text-sm font-medium ${
+                      isLoading || editPrice === String(selectedCategory.pricePerDay)
+                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                    }`}
                   >
-                    Save Changes
+                    {isLoading ? 'Saving...' : 'Save Changes'}
                   </button>
                 </div>
               </div>
