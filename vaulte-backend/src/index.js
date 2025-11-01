@@ -26,6 +26,8 @@ const dataVaultWriteRoutes = require('./routes/dataVaultWrite');
 const dataMarketplaceRoutes = require('./routes/dataMarketplace');
 const dataMarketplaceWriteRoutes = require('./routes/dataMarketplaceWrite');
 const authRoutes = require('./routes/auth');
+const sseRoutes = require('./routes/sse');
+const { startWatcher } = require('./services/categoryWatcher');
 
 // Load Swagger document
 const swaggerDocument = YAML.load(path.join(__dirname, 'docs/swagger.yaml'));
@@ -35,7 +37,10 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(helmet()); // Security headers
+// Izinkan resource diakses lintas origin untuk SSE (CORP), tetap aman untuk header lain
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}));
 app.use(createCors());
 app.use(express.json());
 app.use(createLogger()); // Logging
@@ -58,6 +63,9 @@ app.use('/api/marketplace', writeLimiter, dataMarketplaceWriteRoutes);
 const authLimiterWithBypass = createCompositeLimiter(testBypass, authLimiter);
 app.use('/api/auth', authLimiterWithBypass, authRoutes);
 
+// SSE routes (server-push)
+app.use('/sse', sseRoutes);
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
@@ -72,6 +80,8 @@ if (require.main === module) {
     console.info(`Vaulté API server running on port ${PORT}`);
     console.info(`Environment: ${process.env.NODE_ENV}`);
     console.info(`Connected to blockchain: ${process.env.RPC_URL}`);
+    // Start watcher untuk push update
+    startWatcher();
   });
 }
 

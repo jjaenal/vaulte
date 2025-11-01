@@ -12,7 +12,9 @@ function createCors() {
       // Allow requests with no origin (like mobile apps or curl)
       if (!origin) return callback(null, true);
       if (allowList.includes(origin)) return callback(null, true);
-      return callback(new Error('Not allowed by CORS'));
+      // Jangan lempar error 500; biarkan request jalan tanpa header CORS
+      // Route spesifik (mis. SSE) akan menambahkan header secara manual bila perlu
+      return callback(null, false);
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],

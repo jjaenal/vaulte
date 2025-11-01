@@ -23,7 +23,7 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "swagger-ui-express": "^5.0.1",
-    "viem": "^1.19.11",
+    "viem": "^1.21.4",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {

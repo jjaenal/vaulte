@@ -1,4 +1,9 @@
-const { publicClient, contractAddresses, contractABIs } = require('../utils/blockchain');
+// Perbaikan: gunakan konstanta address/ABI yang benar dari utils/blockchain
+const {
+  publicClient,
+  DATA_MARKETPLACE_ADDRESS,
+  DataMarketplaceABI,
+} = require("../utils/blockchain");
 
 /**
  * Service for interacting with DataMarketplace smart contract
@@ -13,17 +18,17 @@ class DataMarketplaceService {
     try {
       // Iterate totalRequests and filter by buyer
       const totalRequests = await publicClient.readContract({
-        address: contractAddresses.dataMarketplace,
-        abi: contractABIs.dataMarketplace,
-        functionName: 'totalRequests'
+        address: DATA_MARKETPLACE_ADDRESS,
+        abi: DataMarketplaceABI,
+        functionName: "totalRequests",
       });
       const matches = [];
       for (let i = 1n; i <= totalRequests; i++) {
         const r = await publicClient.readContract({
-          address: contractAddresses.dataMarketplace,
-          abi: contractABIs.dataMarketplace,
-          functionName: 'requestsById',
-          args: [i]
+          address: DATA_MARKETPLACE_ADDRESS,
+          abi: DataMarketplaceABI,
+          functionName: "requestsById",
+          args: [i],
         });
         // r: [buyer, seller, categoryId, durationDays, amount, status]
         if (r[0].toLowerCase() === buyerAddress.toLowerCase()) {
@@ -32,7 +37,7 @@ class DataMarketplaceService {
       }
       return matches;
     } catch (error) {
-      console.error('Error fetching buyer requests:', error);
+      console.error("Error fetching buyer requests:", error);
       throw error;
     }
   }
@@ -46,17 +51,17 @@ class DataMarketplaceService {
     try {
       // Iterate totalRequests and filter by seller
       const totalRequests = await publicClient.readContract({
-        address: contractAddresses.dataMarketplace,
-        abi: contractABIs.dataMarketplace,
-        functionName: 'totalRequests'
+        address: DATA_MARKETPLACE_ADDRESS,
+        abi: DataMarketplaceABI,
+        functionName: "totalRequests",
       });
       const matches = [];
       for (let i = 1n; i <= totalRequests; i++) {
         const r = await publicClient.readContract({
-          address: contractAddresses.dataMarketplace,
-          abi: contractABIs.dataMarketplace,
-          functionName: 'requestsById',
-          args: [i]
+          address: DATA_MARKETPLACE_ADDRESS,
+          abi: DataMarketplaceABI,
+          functionName: "requestsById",
+          args: [i],
         });
         if (r[1].toLowerCase() === ownerAddress.toLowerCase()) {
           matches.push(i);
@@ -64,7 +69,7 @@ class DataMarketplaceService {
       }
       return matches;
     } catch (error) {
-      console.error('Error fetching owner requests:', error);
+      console.error("Error fetching owner requests:", error);
       throw error;
     }
   }
@@ -77,12 +82,12 @@ class DataMarketplaceService {
   async getRequestDetails(requestId) {
     try {
       const result = await publicClient.readContract({
-        address: contractAddresses.dataMarketplace,
-        abi: contractABIs.dataMarketplace,
-        functionName: 'requestsById',
-        args: [requestId]
+        address: DATA_MARKETPLACE_ADDRESS,
+        abi: DataMarketplaceABI,
+        functionName: "requestsById",
+        args: [requestId],
       });
-      
+
       return {
         id: requestId,
         buyer: result[0],
@@ -90,10 +95,13 @@ class DataMarketplaceService {
         categoryId: result[2],
         durationDays: result[3],
         totalAmount: result[4],
-        status: this._mapRequestStatus(result[5])
+        status: this._mapRequestStatus(result[5]),
       };
     } catch (error) {
-      console.error(`Error fetching request details for ID ${requestId}:`, error);
+      console.error(
+        `Error fetching request details for ID ${requestId}:`,
+        error
+      );
       throw error;
     }
   }
@@ -107,20 +115,20 @@ class DataMarketplaceService {
   async quote(categoryId, durationDays) {
     try {
       const result = await publicClient.readContract({
-        address: contractAddresses.dataMarketplace,
-        abi: contractABIs.dataMarketplace,
-        functionName: 'quote',
-        args: [categoryId, durationDays]
+        address: DATA_MARKETPLACE_ADDRESS,
+        abi: DataMarketplaceABI,
+        functionName: "quote",
+        args: [categoryId, durationDays],
       });
-      
+
       // result: [total, platformFee, ownerAmount]
       return {
         totalAmount: result[0],
         platformFee: result[1],
-        ownerAmount: result[2]
+        ownerAmount: result[2],
       };
     } catch (error) {
-      console.error('Error calculating quote:', error);
+      console.error("Error calculating quote:", error);
       throw error;
     }
   }
@@ -132,8 +140,14 @@ class DataMarketplaceService {
    * @private
    */
   _mapRequestStatus(statusCode) {
-    const statuses = ['Requested', 'Approved', 'Rejected', 'Cancelled', 'Expired'];
-    return statuses[statusCode] || 'Unknown';
+    const statuses = [
+      "Requested",
+      "Approved",
+      "Rejected",
+      "Cancelled",
+      "Expired",
+    ];
+    return statuses[statusCode] || "Unknown";
   }
 }
 

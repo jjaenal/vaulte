@@ -151,9 +151,7 @@ const createUserLimiter = (windowMs = 15 * 60 * 1000, max = 500) => {
 const apiKeyLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
   max: 10000, // 10,000 requests per hour for API keys
-  keyGenerator: (req) => {
-    return req.headers['x-api-key'] || req.ip;
-  },
+  // Remove custom keyGenerator to use default IP-based limiting with proper IPv6 support
   message: {
     error: 'API key rate limit exceeded',
     message: 'API key has exceeded hourly rate limit',
