@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "dev"]
+  pull_request:
+    branches: ["main", "dev"]
+
+jobs:
+  contracts:
+    name: Contracts Lint & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+      - name: Install deps
+        working-directory: vaulte-contracts
+        run: npm ci
+      - name: Lint (Solidity & JS)
+        working-directory: vaulte-contracts
+        run: npm run lint
+      - name: Test
+        working-directory: vaulte-contracts
+        run: npx hardhat test
+      - name: Gas report
+        working-directory: vaulte-contracts
+        run: REPORT_GAS=true npx hardhat test
+
+  backend:
+    name: Backend Lint & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+      - name: Install deps
+        working-directory: vaulte-backend
+        run: npm ci
+      - name: Lint
+        working-directory: vaulte-backend
+        run: npm run lint
+      - name: Test
+        working-directory: vaulte-backend
+        run: npm test
+
+  frontend:
+    name: Frontend Lint & Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+      - name: Install deps
+        working-directory: vaulte-frontend
+        run: npm ci
+      - name: Lint
+        working-directory: vaulte-frontend
+        run: npm run lint
+      - name: Build
+        working-directory: vaulte-frontend
+        run: npm run build
