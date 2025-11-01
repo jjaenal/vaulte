@@ -1065,6 +1065,19 @@ vaulte-contracts/
       - TransactionError modal
       - Retry functionality
       - [x] Basic TransactionModal component (pending/success/error)
+
+**Real-time Updates (SSE)**
+
+```markdown
+- [x] Backend: Implement SSE endpoint `GET /sse/categories/:address` dengan header CORS & CORP yang tepat
+- [x] Backend: Tambahkan handler `OPTIONS` untuk preflight dan fallback `Access-Control-Allow-Origin: *` bila origin tidak ada di allowlist
+- [x] Frontend: Integrasi hook `useCategoriesSSE` di Dashboard untuk live update kategori
+- [x] Frontend: Perbaiki reconnect handling (abaikan error saat CONNECTING, reset indikator di `open`), hilangkan `withCredentials`
+- [x] Frontend: Cegah spam toast dengan `useRef` flag `errorNotifiedRef`
+- [x] Konfigurasi env: `NEXT_PUBLIC_BACKEND_URL` dan flag `NEXT_PUBLIC_USE_LOCAL_HARDHAT`
+- [ ] Rollout SSE ke halaman lain (Vault, Marketplace, Buyer Portal, Settings)
+- [ ] Tambahkan notifikasi real-time di Navbar (badge / toast) untuk event penting
+```
 ```
 
 **State Management (Zustand)**
