@@ -115,7 +115,7 @@
 - [ ] Configure Solhint rules (.solhint.json)
 - [ ] Install Prettier: `npm install --save-dev prettier prettier-plugin-solidity`
 - [ ] Configure Prettier (.prettierrc)
-- [ ] Setup pre-commit hooks (husky + lint-staged)
+- [x] Setup pre-commit hooks (husky + lint-staged)
 - [x] Configure ESLint for JavaScript tests
 
 **Testing Framework**
@@ -1038,7 +1038,7 @@ vaulte-contracts/
 
 **Web3 Integration**
 
-```typescript
+````typescript
 - [x] Create hooks/useDataVault.ts
       - [x] readContract untuk mendapatkan categories
       - [x] writeContract untuk register category
@@ -1082,8 +1082,9 @@ vaulte-contracts/
 - [x] Frontend: Optimisasi SSE dengan `queryClient.setQueryData` (hindari refetch)
 - [x] Tooling: Aktifkan TanStack React Query Devtools (development only)
 - [ ] Tambahkan notifikasi real-time di Navbar (badge / toast) untuk event penting
-```
-```
+````
+
+````
 
 **State Management (Zustand)**
 
@@ -1102,7 +1103,7 @@ vaulte-contracts/
       - Pending requests
       - Active subscriptions
       - Transaction history
-```
+````
 
 **API Integration**
 

@@ -1,0 +1,12 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "[husky] Menjalankan lint-staged (prettier format untuk file yang berubah)"
+npx --no-install lint-staged || exit 1
+
+echo "[husky] Menjalankan lint di semua paket"
+npm --prefix vaulte-contracts run lint || exit 1
+npm --prefix vaulte-backend run lint || exit 1
+npm --prefix vaulte-frontend run lint || exit 1
+
+echo "[husky] Semua lint & format lolos ✅"
