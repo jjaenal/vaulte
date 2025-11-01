@@ -124,7 +124,7 @@
 - [ ] Setup Mocha/Chai
 - [ ] Write example test (sanity check)
 - [ ] Configure test coverage: `npm install --save-dev solidity-coverage`
-- [ ] Setup continuous integration (GitHub Actions)
+- [x] Setup continuous integration (GitHub Actions)
 
 **Project Structure**
 
