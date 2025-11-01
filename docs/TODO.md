@@ -114,7 +114,7 @@
 - [ ] Install Solhint: `npm install --save-dev solhint`
 - [ ] Configure Solhint rules (.solhint.json)
 - [ ] Install Prettier: `npm install --save-dev prettier prettier-plugin-solidity`
-- [ ] Configure Prettier (.prettierrc)
+- [x] Configure Prettier (.prettierrc)
 - [x] Setup pre-commit hooks (husky + lint-staged)
 - [x] Configure ESLint for JavaScript tests
 
