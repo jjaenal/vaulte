@@ -27,12 +27,24 @@ router.get('/categories/:address', (req, res) => {
 
   // Header SSE
   // Pastikan CORS header eksplisit untuk koneksi SSE (menghindari blokir browser)
-  const allowList = (process.env.CORS_ORIGIN || 'http://localhost:3000').split(',').map((o) => o.trim()).filter(Boolean);
+  // Izinkan 3002 secara default untuk dev; bisa override via env CORS_ORIGIN
+  const allowList = (process.env.CORS_ORIGIN || 'http://localhost:3000,http://localhost:3002')
+    .split(',')
+    .map((o) => o.trim())
+    .filter(Boolean);
   const origin = req.headers.origin;
   if (origin && allowList.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Access-Control-Allow-Credentials', 'true');
+  } else {
+    // Fallback: pakai wildcard tanpa kredensial
+    // Catatan: SSE umumnya tidak butuh cookie; Authorization header tetap bisa dipakai
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Credentials', 'false');
   }
+  // Header CORS tambahan dan beri tahu cache/proxy bahwa header bergantung pada Origin
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-API-KEY');
+  res.setHeader('Vary', 'Origin');
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');

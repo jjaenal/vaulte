@@ -748,12 +748,12 @@ vaulte-contracts/
 
 - [ ] Create Next.js project: `npx create-next-app@latest vaulte-frontend --typescript --tailwind --app`
 - [ ] Install dependencies:
-  - [ ] `npm install wagmi viem @tanstack/react-query`
-  - [ ] `npm install @rainbow-me/rainbowkit`
+  - [x] `npm install wagmi viem @tanstack/react-query`
+  - [x] `npm install @rainbow-me/rainbowkit`
   - [ ] `npm install lucide-react` (icons)
   - [ ] `npm install recharts` (charts)
-  - [ ] `npm install zustand` (state management)
-  - [ ] `npm install axios`
+  - [x] `npm install zustand` (state management)
+  - [x] `npm install axios`
   - [ ] `npm install react-hook-form zod @hookform/resolvers`
 
 **Web3 Configuration**
@@ -775,7 +775,7 @@ vaulte-contracts/
 **Layout Components**
 
 ```typescript
-- [ ] Create app/layout.tsx (root layout)
+ - [x] Create app/layout.tsx (root layout)
       - RainbowKit provider
       - React Query provider
       - Wagmi config provider
@@ -1075,7 +1075,12 @@ vaulte-contracts/
 - [x] Frontend: Perbaiki reconnect handling (abaikan error saat CONNECTING, reset indikator di `open`), hilangkan `withCredentials`
 - [x] Frontend: Cegah spam toast dengan `useRef` flag `errorNotifiedRef`
 - [x] Konfigurasi env: `NEXT_PUBLIC_BACKEND_URL` dan flag `NEXT_PUBLIC_USE_LOCAL_HARDHAT`
-- [ ] Rollout SSE ke halaman lain (Vault, Marketplace, Buyer Portal, Settings)
+- [x] Rollout SSE ke halaman Vault
+- [x] Rollout SSE ke halaman Marketplace
+- [ ] Rollout SSE ke halaman Buyer Portal
+- [ ] Rollout SSE ke halaman Settings
+- [x] Frontend: Optimisasi SSE dengan `queryClient.setQueryData` (hindari refetch)
+- [x] Tooling: Aktifkan TanStack React Query Devtools (development only)
 - [ ] Tambahkan notifikasi real-time di Navbar (badge / toast) untuk event penting
 ```
 ```

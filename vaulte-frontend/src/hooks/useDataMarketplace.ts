@@ -1,11 +1,11 @@
 import { useAccount, useWriteContract, useWatchContractEvent } from "wagmi";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import {
   CONTRACT_ADDRESSES,
   DATA_MARKETPLACE_ABI,
 } from "@/constants/contracts";
 import { useToast } from "@/components/ui/ToastProvider";
-import { useState, useRef } from "react";
-import { retryApiCall, getApiErrorMessage } from "@/utils/apiUtils";
+import { useState } from "react";
 import type { Log, Hex } from "viem";
 
 export function useDataMarketplace() {
@@ -13,13 +13,11 @@ export function useDataMarketplace() {
   const { showToast } = useToast();
   const { writeContractAsync } = useWriteContract();
   const [isLoading, setIsLoading] = useState(false);
+  // QueryClient untuk invalidasi cache saat ada event on-chain
+  const queryClient = useQueryClient();
 
-  // Cache untuk mengurangi API calls yang tidak perlu
-  const cacheRef = useRef<{
-    [key: string]: { data: unknown; timestamp: number };
-  }>({});
-  // Dedup in-flight requests agar panggilan paralel dengan key yang sama tidak duplikat
-  const inFlightRef = useRef<Map<string, Promise<unknown>>>(new Map());
+  // Komentar: TanStack Query sudah melakukan dedup dan caching.
+  // Tidak perlu cacheRef dan inFlightRef manual lagi.
 
   // Event watchers untuk auto-refresh/feedback
   useWatchContractEvent({
@@ -38,6 +36,11 @@ export function useDataMarketplace() {
       });
       if (related.length > 0) {
         showToast("New access request created", "info");
+        // Komentar (ID): Invalidasi daftar request buyer & owner agar UI menyegarkan
+        if (address) {
+          queryClient.invalidateQueries({ queryKey: ["marketplace", "requests", "buyer", address] });
+          queryClient.invalidateQueries({ queryKey: ["marketplace", "requests", "owner", address] });
+        }
       }
     },
   });
@@ -58,6 +61,10 @@ export function useDataMarketplace() {
       });
       if (related.length > 0) {
         showToast("Access request approved", "success");
+        if (address) {
+          queryClient.invalidateQueries({ queryKey: ["marketplace", "requests", "buyer", address] });
+          queryClient.invalidateQueries({ queryKey: ["marketplace", "requests", "owner", address] });
+        }
       }
     },
   });
@@ -78,6 +85,10 @@ export function useDataMarketplace() {
       });
       if (related.length > 0) {
         showToast("Access request rejected", "error");
+        if (address) {
+          queryClient.invalidateQueries({ queryKey: ["marketplace", "requests", "buyer", address] });
+          queryClient.invalidateQueries({ queryKey: ["marketplace", "requests", "owner", address] });
+        }
       }
     },
   });
@@ -275,77 +286,119 @@ export function useDataMarketplace() {
     status: string;
   };
 
-  const getRequests = async (
-    role: "owner" | "buyer" = "owner"
-  ): Promise<MarketplaceRequest[]> => {
-    try {
-      if (!address) return [];
+  // Util: patch status request secara optimistik di cache TanStack
+  // Komentar (ID): Menghindari loop refetch dan memberi UX cepat
+  const patchRequestStatus = (
+    requestId: number,
+    newStatus: string
+  ) => {
+    if (!address) return;
+    const ownerKey = ["marketplace", "requests", "owner", address];
+    const buyerKey = ["marketplace", "requests", "buyer", address];
 
-      // Cache key berdasarkan role dan address
-      const cacheKey = `${role}-${address}`;
-      const now = Date.now();
-      const CACHE_DURATION = 15000; // 15 detik cache untuk menurunkan frekuensi fetch
-
-      // Cek cache terlebih dahulu
-      const cached = cacheRef.current[cacheKey];
-      if (cached && now - cached.timestamp < CACHE_DURATION) {
-        return cached.data as MarketplaceRequest[];
-      }
-
-      // Jika ada request in-flight dengan key yang sama, tunggu promise tersebut
-      const inFlight = inFlightRef.current.get(cacheKey) as
-        | Promise<MarketplaceRequest[]>
-        | undefined;
-      if (inFlight) {
-        // Komentar (ID): Dedup in-flight agar tidak memicu beberapa fetch bersamaan
-        return await inFlight;
-      }
-
-      // Gunakan retry mechanism untuk API call
-      const promise = retryApiCall(
-        async () => {
-          // Gunakan base URL backend eksplisit untuk menghindari mismatch port
-          // const baseUrl = "http://localhost:3005";
-          const url =
-            role === "owner"
-              ? `/api/marketplace/requests/owner/${address}`
-              : `/api/marketplace/requests/buyer/${address}`;
-          const res = await fetch(url);
-          if (!res.ok) {
-            throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-          }
-          const json = await res.json();
-          return (json?.data || []) as MarketplaceRequest[];
-        },
-        {
-          maxRetries: 2, // Kurangi retry untuk menghindari spam
-          baseDelay: 1000,
-          maxDelay: 3000,
-        }
+    const patch = (data?: MarketplaceRequest[]) =>
+      (data || []).map((req) =>
+        req.id === requestId ? { ...req, status: newStatus } : req
       );
 
-      // Simpan promise ke in-flight map untuk dedup
-      inFlightRef.current.set(cacheKey, promise);
+    queryClient.setQueryData<MarketplaceRequest[]>(ownerKey, (old) => patch(old));
+    queryClient.setQueryData<MarketplaceRequest[]>(buyerKey, (old) => patch(old));
+  };
 
-      let data: MarketplaceRequest[] = [];
-      try {
-        data = await promise;
-      } finally {
-        // Pastikan selalu menghapus entry in-flight meski terjadi error
-        inFlightRef.current.delete(cacheKey);
+  // Mutation: approve dengan optimistic update
+  const approveRequestMutation = useMutation({
+    mutationFn: async (requestId: number) => {
+      // Jalankan tx on-chain
+      const txHash = await approveRequestTx(requestId);
+      return txHash;
+    },
+    onMutate: async (requestId: number) => {
+      // Komentar (ID): Patch optimistik agar UI terasa instan
+      patchRequestStatus(requestId, "Approved");
+    },
+    onError: (_err, requestId) => {
+      // Komentar (ID): Kembalikan status ke Requested saat error
+      patchRequestStatus(requestId, "Requested");
+    },
+    onSettled: () => {
+      // Komentar (ID): Tetap invalidasi untuk sinkronisasi final dari backend
+      if (address) {
+        queryClient.invalidateQueries({ queryKey: ["marketplace", "requests", "buyer", address] });
+        queryClient.invalidateQueries({ queryKey: ["marketplace", "requests", "owner", address] });
       }
+    },
+  });
 
-      // Simpan ke cache
-      cacheRef.current[cacheKey] = { data, timestamp: now };
+  // Mutation: reject dengan optimistic update
+  const rejectRequestMutation = useMutation({
+    mutationFn: async (requestId: number) => {
+      const txHash = await rejectRequestTx(requestId);
+      return txHash;
+    },
+    onMutate: async (requestId: number) => {
+      patchRequestStatus(requestId, "Rejected");
+    },
+    onError: (_err, requestId) => {
+      patchRequestStatus(requestId, "Requested");
+    },
+    onSettled: () => {
+      if (address) {
+        queryClient.invalidateQueries({ queryKey: ["marketplace", "requests", "buyer", address] });
+        queryClient.invalidateQueries({ queryKey: ["marketplace", "requests", "owner", address] });
+      }
+    },
+  });
 
-      return data;
-    } catch (error) {
-      console.error("Error fetching requests:", error);
-      // Show user-friendly error message
-      const errorMessage = getApiErrorMessage(error);
-      showToast(errorMessage, "error");
-      return [];
-    }
+  // Mutation: cancel dengan optimistic update
+  const cancelRequestMutation = useMutation({
+    mutationFn: async (requestId: number) => {
+      const txHash = await cancelRequestTx(requestId);
+      return txHash;
+    },
+    onMutate: async (requestId: number) => {
+      patchRequestStatus(requestId, "Cancelled");
+    },
+    onError: (_err, requestId) => {
+      patchRequestStatus(requestId, "Requested");
+    },
+    onSettled: () => {
+      if (address) {
+        queryClient.invalidateQueries({ queryKey: ["marketplace", "requests", "buyer", address] });
+        queryClient.invalidateQueries({ queryKey: ["marketplace", "requests", "owner", address] });
+      }
+    },
+  });
+
+  // Hook query untuk daftar request owner
+  const useOwnerRequestsQuery = () => {
+    return useQuery<MarketplaceRequest[]>({
+      queryKey: ["marketplace", "requests", "owner", address ?? "-"] ,
+      enabled: !!address,
+      // Komentar: gunakan fetch sederhana; retry ditangani oleh QueryClient
+      queryFn: async () => {
+        const res = await fetch(`/api/marketplace/requests/owner/${address}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        return (json?.data || []) as MarketplaceRequest[];
+      },
+      // Data dianggap segar sampai ada invalidasi dari SSE/kontrak
+      staleTime: Infinity,
+    });
+  };
+
+  // Hook query untuk daftar request buyer
+  const useBuyerRequestsQuery = () => {
+    return useQuery<MarketplaceRequest[]>({
+      queryKey: ["marketplace", "requests", "buyer", address ?? "-"] ,
+      enabled: !!address,
+      queryFn: async () => {
+        const res = await fetch(`/api/marketplace/requests/buyer/${address}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const json = await res.json();
+        return (json?.data || []) as MarketplaceRequest[];
+      },
+      staleTime: Infinity,
+    });
   };
 
   return {
@@ -358,7 +411,13 @@ export function useDataMarketplace() {
     rejectRequestTx,
     cancelRequest,
     cancelRequestTx,
-    getRequests,
+    // Query hooks
+    useOwnerRequestsQuery,
+    useBuyerRequestsQuery,
+    // Mutation hooks
+    approveRequestMutation,
+    rejectRequestMutation,
+    cancelRequestMutation,
     isLoading,
   };
 }

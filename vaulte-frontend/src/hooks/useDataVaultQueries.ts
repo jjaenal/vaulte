@@ -222,7 +222,9 @@ export function useDataVaultActions() {
  * Hook SSE: subscribe ke backend untuk update kategori per address
  * Saat ada event push, kita invalidate cache kategori agar fetch sekali.
  */
-export function useCategoriesSSE(addr?: string) {
+// Hook SSE dengan opsi callback: jika onUpdate disediakan,
+// panggil callback tersebut; jika tidak, invalidate cache TanStack Query.
+export function useCategoriesSSE(addr?: string, onUpdate?: () => void) {
   const { address } = useAccount();
   const target = addr || address;
   const queryClient = useQueryClient();
@@ -238,16 +240,37 @@ export function useCategoriesSSE(addr?: string) {
     const es = new EventSource(url);
 
     // Handler SSE bertipe jelas agar tidak implicit any
-    const onUpdate = (ev: MessageEvent<string>) => {
+    const onUpdateEvent = (ev: MessageEvent<string>) => {
       try {
-        // Validasi payload JSON (tidak disimpan, hanya cek format)
-        JSON.parse(ev.data);
-        // Invalidate cache hanya saat ada push dari server
-        queryClient.invalidateQueries({ queryKey: dataVaultKeys.userCategories(target) });
+        // Parse payload JSON untuk digunakan dalam setQueryData
+        const categoriesData = JSON.parse(ev.data);
+        
+        // Jika ada callback khusus, gunakan itu
+        if (typeof onUpdate === 'function') {
+          onUpdate();
+        } else if (Array.isArray(categoriesData)) {
+          // Gunakan setQueryData untuk update cache langsung tanpa fetch baru
+          // Ini lebih efisien daripada invalidateQueries
+          queryClient.setQueryData(
+            dataVaultKeys.userCategories(target),
+            categoriesData
+          );
+          console.log('SSE: Update kategori via setQueryData', categoriesData.length);
+        } else {
+          // Fallback ke invalidate jika format data tidak sesuai ekspektasi
+          queryClient.invalidateQueries({ queryKey: dataVaultKeys.userCategories(target) });
+        }
+        
         // Reset flag error saat koneksi kembali normal
         errorNotifiedRef.current = false;
       } catch (err) {
         console.error('SSE parse error:', err as unknown);
+        // Fallback ke invalidate jika parsing gagal
+        if (typeof onUpdate === 'function') {
+          onUpdate();
+        } else {
+          queryClient.invalidateQueries({ queryKey: dataVaultKeys.userCategories(target) });
+        }
       }
     };
 
@@ -266,17 +289,17 @@ export function useCategoriesSSE(addr?: string) {
       errorNotifiedRef.current = false;
     };
 
-    es.addEventListener('update', onUpdate);
+    es.addEventListener('update', onUpdateEvent);
     es.addEventListener('error', onError);
     es.addEventListener('open', onOpen);
 
     return () => {
       try {
-        es.removeEventListener('update', onUpdate);
+        es.removeEventListener('update', onUpdateEvent);
         es.removeEventListener('error', onError);
         es.removeEventListener('open', onOpen);
         es.close();
       } catch {}
     };
-  }, [target, queryClient, toast]);
+  }, [target, queryClient, toast, onUpdate]);
 }

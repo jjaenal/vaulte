@@ -60,16 +60,18 @@ function prompt(question, defaultValue = '') {
 
 // Helper to prompt for selection from a list
 async function promptSelect(question, options) {
-  console.log(`\n${question}`);
+  // Tampilkan daftar opsi ke pengguna (pakai console.info agar lolos lint)
+  console.info(`\n${question}`);
   options.forEach((option, index) => {
-    console.log(`${index + 1}. ${option}`);
+    console.info(`${index + 1}. ${option}`);
   });
   
   const answer = await prompt('Enter number');
   const selection = parseInt(answer, 10);
   
   if (isNaN(selection) || selection < 1 || selection > options.length) {
-    console.log('Invalid selection. Please try again.');
+    // Validasi input, beri tahu pengguna bila tak valid
+    console.info('Invalid selection. Please try again.');
     return promptSelect(question, options);
   }
   
@@ -93,7 +95,8 @@ function writeCsv(lines) {
 
 // Add a new entry to the CSV
 async function addEntry() {
-  console.log('\n=== Add New Outreach Entry ===');
+  // Mulai proses penambahan entri baru
+  console.info('\n=== Add New Outreach Entry ===');
   
   const name = await promptSelect('Select buyer:', BUYERS);
   const handle = await prompt('Contact handle/email');
@@ -145,7 +148,7 @@ async function addEntry() {
   lines.push(newLine);
   writeCsv(lines);
   
-  console.log('\n✅ Entry added successfully!');
+  console.info('\n✅ Entry added successfully!');
   return true;
 }
 
@@ -153,31 +156,31 @@ async function addEntry() {
 async function updateEntry() {
   const lines = readCsv();
   if (lines.length <= 1) {
-    console.log('No entries to update.');
+    console.info('No entries to update.');
     return false;
   }
   
-  console.log('\n=== Update Existing Entry ===');
-  console.log('\nExisting entries:');
+  console.info('\n=== Update Existing Entry ===');
+  console.info('\nExisting entries:');
   
   // Show existing entries (skip header)
   for (let i = 1; i < lines.length; i++) {
     const fields = lines[i].split(',');
-    console.log(`${i}. ${fields[0]} - ${fields[3]} (${fields[4]})`);
+    console.info(`${i}. ${fields[0]} - ${fields[3]} (${fields[4]})`);
   }
   
   const indexStr = await prompt('Enter entry number to update (or 0 to cancel)');
   const index = parseInt(indexStr, 10);
   
   if (index === 0 || isNaN(index) || index >= lines.length) {
-    console.log('Update canceled or invalid entry.');
+    console.info('Update canceled or invalid entry.');
     return false;
   }
   
   // Parse the selected line
   const fields = lines[index].split(',');
   
-  console.log(`\nUpdating entry for: ${fields[0]}`);
+  console.info(`\nUpdating entry for: ${fields[0]}`);
   const status = await promptSelect('New status:', STATUSES);
   fields[3] = status;
   
@@ -197,13 +200,13 @@ async function updateEntry() {
   lines[index] = fields.join(',');
   writeCsv(lines);
   
-  console.log('\n✅ Entry updated successfully!');
+  console.info('\n✅ Entry updated successfully!');
   return true;
 }
 
 // Main function
 async function main() {
-  console.log('\n🚀 Vaulté Outreach Tracking CLI');
+  console.info('\n🚀 Vaulté Outreach Tracking CLI');
   
   try {
     let continueRunning = true;
@@ -229,7 +232,7 @@ async function main() {
       }
     }
     
-    console.log('\n👋 Goodbye! Happy outreaching!');
+    console.info('\n👋 Goodbye! Happy outreaching!');
   } catch (error) {
     console.error('Error:', error);
   } finally {

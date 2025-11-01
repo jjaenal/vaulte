@@ -20,7 +20,8 @@ export default function Dashboard() {
   useCategoriesSSE(address);
   
   // Keep write operations from original useDataVault
-  const { registerCategory, updateCategory, toggleCategory } = useDataVault();
+  // Komentar: panggil hook untuk menjaga wiring internal, tanpa menggunakan return agar tidak ada variabel menganggur
+  useDataVault();
   
   // Gunakan toast dari Shadcn UI untuk notifikasi
   const { toast } = useToast();

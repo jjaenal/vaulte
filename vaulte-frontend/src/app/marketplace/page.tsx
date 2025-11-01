@@ -1,35 +1,26 @@
 'use client';
 
 import { useAccount } from 'wagmi';
-import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import RequestAccessForm from '@/components/marketplace/RequestAccessForm';
 import { useToast } from '@/components/ui/ToastProvider';
 import { useDataMarketplace } from '@/hooks/useDataMarketplace';
+import { useCategoriesSSE } from '@/hooks/useDataVaultQueries';
 import { useTransactions } from '@/hooks/useTransactions';
 import { TransactionModal } from '@/components/tx/TransactionModal';
-import { useDebounce } from '@/hooks/useDebounce';
+// Komentar (ID): Debounce manual dihapus karena TanStack Query menangani dedup & cache
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function Marketplace() {
   const { address, isConnected } = useAccount();
   const [searchTerm, setSearchTerm] = useState('');
   const { showToast } = useToast();
-  const { getRequests, approveRequestTx, rejectRequestTx, cancelRequestTx } = useDataMarketplace();
+  const { useOwnerRequestsQuery, useBuyerRequestsQuery, approveRequestMutation, rejectRequestMutation, cancelRequestMutation } = useDataMarketplace();
   const { status, hash, handleTx, reset } = useTransactions();
-  const [ownerRequests, setOwnerRequests] = useState<Array<{
-    id: number;
-    buyer: string;
-    seller: string;
-    categoryId: string | number;
-    durationDays: string | number;
-    totalAmount: string | number;
-    status: string;
-  }>>([]);
-  const [buyerRequests, setBuyerRequests] = useState<typeof ownerRequests>([]);
-  const [loadingOwner, setLoadingOwner] = useState(false);
-  const [loadingBuyer, setLoadingBuyer] = useState(false);
-  
-  // Guard untuk mencegah fetch bersamaan
-  const isFetchingRef = useRef(false);
+  // Query untuk daftar request (owner & buyer)
+  const ownerQuery = useOwnerRequestsQuery();
+  const buyerQuery = useBuyerRequestsQuery();
+  const queryClient = useQueryClient();
   
   // Dummy data untuk tampilan
   const availableData = [
@@ -40,41 +31,35 @@ export default function Marketplace() {
     { id: 5, owner: '0xqrst...7890', name: 'Social Media Usage', description: 'Engagement metrics and content preferences', pricePerDay: 0.04, category: 'Social' },
   ];
   
-  const refreshRequestsInternal = useCallback(async () => {
-    if (!isConnected || !address || isFetchingRef.current) return;
-    
-    // Set guard untuk mencegah fetch bersamaan
-    isFetchingRef.current = true;
-    setLoadingOwner(true);
-    setLoadingBuyer(true);
-    
-    try {
-      const owner = await getRequests('owner');
-      const buyer = await getRequests('buyer');
-      setOwnerRequests(owner || []);
-      setBuyerRequests(buyer || []);
-    } catch (err) {
-      console.error('Failed to refresh requests', err);
-    } finally {
-      setLoadingOwner(false);
-      setLoadingBuyer(false);
-      // Reset guard setelah selesai
-      isFetchingRef.current = false;
-    }
-  }, [isConnected, address, getRequests]);
-
-  // Debounce refreshRequests untuk mencegah terlalu banyak API calls
-  const refreshRequests = useDebounce(refreshRequestsInternal, 1000);
+  // Komentar (ID): Tidak perlu fungsi refresh internal; gunakan refetch dari TanStack Query.
 
   // Stabilkan useEffect dengan key yang tidak berubah-ubah
   const connectionKey = useMemo(() => {
     return isConnected && address ? `${address}-connected` : 'disconnected';
   }, [isConnected, address]);
 
+  // Fungsi stabil untuk refetch semua query
+  const refetchAll = useCallback(() => {
+    // Komentar (ID): Invalidate berdasarkan key agar TanStack melakukan refetch
+    queryClient.invalidateQueries({ queryKey: ["marketplace", "requests", "owner", address ?? "-"] });
+    queryClient.invalidateQueries({ queryKey: ["marketplace", "requests", "buyer", address ?? "-"] });
+  }, [queryClient, address]);
+
   useEffect(() => {
-    // Panggil refreshRequestsInternal langsung untuk menghindari dependency warning
-    refreshRequestsInternal();
-  }, [connectionKey, refreshRequestsInternal]); // Gunakan connectionKey dan refreshRequestsInternal
+    // Saat wallet connect berubah, refetch keduanya
+    if (isConnected && address) {
+      refetchAll();
+    }
+    // Komentar (ID): Dependensi eksplisit untuk menenangkan linter react-hooks
+  }, [connectionKey, isConnected, address, refetchAll]);
+
+  // SSE: dengarkan event dari backend untuk menyegarkan daftar request secara realtime
+  // Komentar: gunakan callback agar tidak bergantung pada TanStack Query di halaman ini
+  useCategoriesSSE(address, () => {
+    // Komentar (ID): SSE kategori tidak langsung mempengaruhi daftar requests,
+    // namun jika diperlukan, kita paksa refetch untuk menjaga sinkronisasi UI.
+    refetchAll();
+  });
 
   const filteredData = availableData.filter(item => 
     item.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -84,7 +69,9 @@ export default function Marketplace() {
 
   const handleRequestComplete = () => {
     showToast('Access request submitted', 'success');
-    refreshRequests();
+    // Setelah submit, refetch daftar request
+    ownerQuery.refetch();
+    buyerQuery.refetch();
   };
 
   if (!isConnected) {
@@ -170,11 +157,13 @@ export default function Marketplace() {
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-xl font-semibold text-gray-900">Incoming Requests</h2>
             <button
-              onClick={refreshRequests}
+              onClick={() => {
+                refetchAll();
+              }}
               className="rounded-md bg-gray-100 px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-200"
-              disabled={loadingOwner || loadingBuyer}
+              disabled={ownerQuery.isFetching || buyerQuery.isFetching}
             >
-              {loadingOwner || loadingBuyer ? 'Refreshing...' : 'Refresh'}
+              {ownerQuery.isFetching || buyerQuery.isFetching ? 'Refreshing...' : 'Refresh'}
             </button>
           </div>
           <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
@@ -191,13 +180,13 @@ export default function Marketplace() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {ownerRequests.length === 0 ? (
+                {(ownerQuery.data?.length ?? 0) === 0 ? (
                   <tr>
                     <td className="px-3 py-4 text-sm text-gray-500" colSpan={7}>
-                      {loadingOwner ? 'Loading...' : 'No incoming requests'}
+                      {ownerQuery.isLoading ? 'Loading...' : 'No incoming requests'}
                     </td>
                   </tr>
-                ) : ownerRequests.map((req) => (
+                ) : ownerQuery.data!.map((req) => (
                   <tr key={req.id}>
                     <td className="px-3 py-4 text-sm text-gray-900">{req.id}</td>
                     <td className="px-3 py-4 text-sm text-gray-500">{req.buyer}</td>
@@ -209,14 +198,16 @@ export default function Marketplace() {
                       <div className="flex gap-2 justify-end">
                         <button
                           className="rounded-md bg-green-600 px-3 py-1.5 text-white text-xs hover:bg-green-700 disabled:opacity-50"
-                          disabled={status === 'pending' || req.status !== 'pending'}
+                          disabled={status === 'pending' || req.status !== 'Requested'}
                           onClick={async () => {
                             try {
-                              await handleTx(() => approveRequestTx(req.id));
+                              // Komentar (ID): Gunakan mutation agar patch cache optimistik + invalidasi otomatis
+                              await handleTx(() => approveRequestMutation.mutateAsync(req.id));
                               showToast('Request approved', 'success');
-                              refreshRequests();
+                              refetchAll();
                             } catch {
                               showToast('Failed to approve', 'error');
+                              // Komentar (ID): Biarkan onError di mutation mengembalikan status
                             }
                           }}
                         >
@@ -224,12 +215,12 @@ export default function Marketplace() {
                         </button>
                         <button
                           className="rounded-md bg-red-600 px-3 py-1.5 text-white text-xs hover:bg-red-700 disabled:opacity-50"
-                          disabled={status === 'pending' || req.status !== 'pending'}
+                          disabled={status === 'pending' || req.status !== 'Requested'}
                           onClick={async () => {
                             try {
-                              await handleTx(() => rejectRequestTx(req.id));
+                              await handleTx(() => rejectRequestMutation.mutateAsync(req.id));
                               showToast('Request rejected', 'success');
-                              refreshRequests();
+                              refetchAll();
                             } catch {
                               showToast('Failed to reject', 'error');
                             }
@@ -263,13 +254,13 @@ export default function Marketplace() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {buyerRequests.length === 0 ? (
+                {(buyerQuery.data?.length ?? 0) === 0 ? (
                   <tr>
                     <td className="px-3 py-4 text-sm text-gray-500" colSpan={7}>
-                      {loadingBuyer ? 'Loading...' : 'No requests yet'}
+                      {buyerQuery.isLoading ? 'Loading...' : 'No requests yet'}
                     </td>
                   </tr>
-                ) : buyerRequests.map((req) => (
+                ) : buyerQuery.data!.map((req) => (
                   <tr key={req.id}>
                     <td className="px-3 py-4 text-sm text-gray-900">{req.id}</td>
                     <td className="px-3 py-4 text-sm text-gray-500">{req.seller}</td>
@@ -281,12 +272,12 @@ export default function Marketplace() {
                       <div className="flex gap-2 justify-end">
                         <button
                           className="rounded-md bg-gray-600 px-3 py-1.5 text-white text-xs hover:bg-gray-700 disabled:opacity-50"
-                          disabled={status === 'pending' || req.status !== 'pending'}
+                          disabled={status === 'pending' || req.status !== 'Requested'}
                           onClick={async () => {
                             try {
-                              await handleTx(() => cancelRequestTx(req.id));
+                              await handleTx(() => cancelRequestMutation.mutateAsync(req.id));
                               showToast('Request cancelled', 'success');
-                              refreshRequests();
+                              refetchAll();
                             } catch {
                               showToast('Failed to cancel', 'error');
                             }

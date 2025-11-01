@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useToast } from '@/components/ui/ToastProvider';
 import { useDataVault } from '@/hooks/useDataVault';
+import { useCategoriesSSE } from '@/hooks/useDataVaultQueries';
 
 type Buyer = {
   name: string;
@@ -42,6 +43,7 @@ export default function VaultPage() {
     userCategories,
     getDataCategory,
     isLoadingCategories,
+    refreshCategories,
   } = useDataVault();
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -133,6 +135,13 @@ export default function VaultPage() {
 
     fetchCategories();
   }, [isConnected, userCategories, getDataCategory, showToast]);
+
+  // SSE: dengarkan update on-chain (via backend) dan refresh kategori ketika ada push
+  // Komentar (Indonesia): Dengan callback, kita jaga agar VaultPage ikut realtime tanpa polling
+  useCategoriesSSE(address, () => {
+    // Saat ada event update, panggil refreshCategories untuk sinkronisasi
+    refreshCategories();
+  });
 
   const connectSource = (name: string) => {
     setSources((prev) =>
