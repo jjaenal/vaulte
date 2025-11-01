@@ -1,20 +1,29 @@
 'use client';
 
 import { useAccount, useBalance, useDisconnect } from 'wagmi';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import RegisterDataForm from '@/components/dashboard/RegisterDataForm';
 import { useDataVault } from '@/hooks/useDataVault';
-import { useToast } from '@/components/ui/ToastProvider';
+import { useUserCategories, useDataVaultActions, useCategoriesSSE, DataCategory } from '@/hooks/useDataVaultQueries';
+import { useToast } from '@/components/ui/use-toast';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 
 export default function Dashboard() {
   const { address, isConnected } = useAccount();
   const [activeTab, setActiveTab] = useState('myData');
-  const { userCategories, isLoadingCategories, getDataCategory } = useDataVault();
-  const [categories, setCategories] = useState<unknown[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const { showToast } = useToast();
+  
+  // TanStack Query hooks - jauh lebih sederhana!
+  const { data: userCategories, isLoading: isLoadingCategories, error: categoriesError } = useUserCategories();
+  const { refreshUserCategories } = useDataVaultActions();
+  // Aktifkan server-push untuk update kategori
+  useCategoriesSSE(address);
+  
+  // Keep write operations from original useDataVault
+  const { registerCategory, updateCategory, toggleCategory } = useDataVault();
+  
+  // Gunakan toast dari Shadcn UI untuk notifikasi
+  const { toast } = useToast();
   const { disconnect } = useDisconnect();
 
   const { data: balanceData, isLoading: isLoadingBalance, isError: isBalanceError, error: balanceError } = useBalance({
@@ -82,41 +91,27 @@ export default function Dashboard() {
     ], []
   );
   
-  // Fetch data categories when user is connected
-  useEffect(() => {
-    const fetchCategories = async () => {
-      if (!userCategories || userCategories.length === 0) {
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const categoryPromises = userCategories.map(async (id) => {
-          const category = await getDataCategory(Number(id));
-          return { ...category, id: Number(id) };
-        });
-
-        const fetchedCategories = await Promise.all(categoryPromises);
-        setCategories(fetchedCategories);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (isConnected && userCategories) {
-      fetchCategories();
-    }
-  }, [isConnected, userCategories, getDataCategory]);
+  // Handle errors dengan toast
+  if (categoriesError) {
+    console.error('Failed to fetch user categories:', categoriesError);
+    // Tampilkan notifikasi error dengan toast
+    toast({
+      title: 'Gagal mengambil kategori on-chain',
+      description: 'Silakan coba lagi beberapa saat atau refresh.',
+      variant: 'destructive',
+    });
+  }
 
   // Toast error jika gagal mengambil balance
-  useEffect(() => {
-    if (isBalanceError && balanceError) {
-      console.error('Failed to fetch balance:', balanceError);
-      showToast('Gagal mengambil balance', 'error');
-    }
-  }, [isBalanceError, balanceError, showToast]);
+  if (isBalanceError && balanceError) {
+    console.error('Failed to fetch balance:', balanceError);
+    // Tampilkan notifikasi error dengan toast
+    toast({
+      title: 'Gagal mengambil saldo wallet',
+      description: 'Periksa koneksi atau jaringan lalu coba lagi.',
+      variant: 'destructive',
+    });
+  }
 
   if (!isConnected) {
     return (
@@ -137,6 +132,7 @@ export default function Dashboard() {
               Manage your data categories, access requests, and earnings
             </p>
             <p className="mt-1 text-xs text-gray-400">Connected as {address}</p>
+            {/* TanStack Query handles background refresh automatically */}
           </div>
           <div className="mt-4 md:mt-0">
             <button
@@ -144,6 +140,17 @@ export default function Dashboard() {
               className="rounded-md bg-purple-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-600"
             >
               Register New Data Category
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                // Komentar: Manual refresh dengan TanStack Query
+                refreshUserCategories();
+              }}
+              className="ml-3 rounded-md bg-gray-100 px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-400"
+              disabled={isLoadingCategories}
+            >
+              {isLoadingCategories ? 'Refreshing…' : 'Refresh Categories'}
             </button>
           </div>
         </div>
@@ -153,7 +160,7 @@ export default function Dashboard() {
           {(() => {
             const totalEarnings = earnings.reduce((sum, e) => sum + e.amount, 0);
             const activeBuyers = new Set(earnings.map((e) => e.buyer)).size;
-            const enabledCategories = myData.filter((d) => d.active).length;
+            const enabledCategories = userCategories ? (userCategories as DataCategory[]).filter((d) => d.active).length : 0;
             const privacyScore = 85; // Placeholder score
             const cards = [
               { title: 'Total Earnings', value: `${totalEarnings} ETH`, subtitle: 'Last 30 days' },
@@ -276,12 +283,12 @@ export default function Dashboard() {
           </ul>
         </div>
 
-        {(isLoading || isLoadingCategories) && (
-          <div className="mb-6 text-sm text-gray-500">Loading your on-chain categories...</div>
-        )}
-        {!isLoading && categories.length > 0 && (
-          <div className="mb-6 text-sm text-gray-600">You have {categories.length} on-chain categories.</div>
-        )}
+        {isLoadingCategories && (
+            <div className="mb-6 text-sm text-gray-500">Loading your on-chain categories...</div>
+          )}
+          {!isLoadingCategories && userCategories && (userCategories as DataCategory[]).length > 0 && (
+            <div className="mb-6 text-sm text-gray-600">You have {(userCategories as DataCategory[]).length} on-chain categories.</div>
+          )}
 
         <RegisterDataForm />
 

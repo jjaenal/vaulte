@@ -1,12 +1,13 @@
 'use client';
 
 import { useAccount } from 'wagmi';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import RequestAccessForm from '@/components/marketplace/RequestAccessForm';
 import { useToast } from '@/components/ui/ToastProvider';
 import { useDataMarketplace } from '@/hooks/useDataMarketplace';
 import { useTransactions } from '@/hooks/useTransactions';
 import { TransactionModal } from '@/components/tx/TransactionModal';
+import { useDebounce } from '@/hooks/useDebounce';
 
 export default function Marketplace() {
   const { address, isConnected } = useAccount();
@@ -27,6 +28,9 @@ export default function Marketplace() {
   const [loadingOwner, setLoadingOwner] = useState(false);
   const [loadingBuyer, setLoadingBuyer] = useState(false);
   
+  // Guard untuk mencegah fetch bersamaan
+  const isFetchingRef = useRef(false);
+  
   // Dummy data untuk tampilan
   const availableData = [
     { id: 1, owner: '0xabcd...1234', name: 'Fitness Data', description: 'Daily workout and activity tracking data', pricePerDay: 0.05, category: 'Health' },
@@ -36,10 +40,14 @@ export default function Marketplace() {
     { id: 5, owner: '0xqrst...7890', name: 'Social Media Usage', description: 'Engagement metrics and content preferences', pricePerDay: 0.04, category: 'Social' },
   ];
   
-  const refreshRequests = useCallback(async () => {
-    if (!isConnected || !address) return;
+  const refreshRequestsInternal = useCallback(async () => {
+    if (!isConnected || !address || isFetchingRef.current) return;
+    
+    // Set guard untuk mencegah fetch bersamaan
+    isFetchingRef.current = true;
     setLoadingOwner(true);
     setLoadingBuyer(true);
+    
     try {
       const owner = await getRequests('owner');
       const buyer = await getRequests('buyer');
@@ -50,12 +58,23 @@ export default function Marketplace() {
     } finally {
       setLoadingOwner(false);
       setLoadingBuyer(false);
+      // Reset guard setelah selesai
+      isFetchingRef.current = false;
     }
   }, [isConnected, address, getRequests]);
 
+  // Debounce refreshRequests untuk mencegah terlalu banyak API calls
+  const refreshRequests = useDebounce(refreshRequestsInternal, 1000);
+
+  // Stabilkan useEffect dengan key yang tidak berubah-ubah
+  const connectionKey = useMemo(() => {
+    return isConnected && address ? `${address}-connected` : 'disconnected';
+  }, [isConnected, address]);
+
   useEffect(() => {
-    refreshRequests();
-  }, [refreshRequests]);
+    // Panggil refreshRequestsInternal langsung untuk menghindari dependency warning
+    refreshRequestsInternal();
+  }, [connectionKey, refreshRequestsInternal]); // Gunakan connectionKey dan refreshRequestsInternal
 
   const filteredData = availableData.filter(item => 
     item.name.toLowerCase().includes(searchTerm.toLowerCase()) || 

@@ -1,1007 +1,1007 @@
-// Alamat kontrak di testnet (Mumbai)
+// Alamat kontrak di localhost Hardhat (untuk development)
 export const CONTRACT_ADDRESSES = {
-  // Ganti dengan alamat kontrak yang sudah di-deploy
-  dataVault: '0x0000000000000000000000000000000000000000',
-  dataMarketplace: '0x0000000000000000000000000000000000000000',
-  paymentSplitter: '0x0000000000000000000000000000000000000000',
+  // Alamat kontrak yang sudah di-deploy ke Hardhat lokal
+  dataVault: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+  dataMarketplace: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+  paymentSplitter: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
 };
 
 // ABI untuk kontrak DataVault
 export const DATA_VAULT_ABI = [
   {
-    "inputs": [],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
+    inputs: [],
+    stateMutability: "nonpayable",
+    type: "constructor",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "categoryId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "categoryId",
+        type: "uint256",
+      },
     ],
-    "name": "CategoryNotActive",
-    "type": "error"
+    name: "CategoryNotActive",
+    type: "error",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "categoryId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "categoryId",
+        type: "uint256",
+      },
     ],
-    "name": "CategoryNotFound",
-    "type": "error"
+    name: "CategoryNotFound",
+    type: "error",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
+        internalType: "address",
+        name: "owner",
+        type: "address",
       },
       {
-        "internalType": "uint256",
-        "name": "categoryId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "categoryId",
+        type: "uint256",
+      },
     ],
-    "name": "NotCategoryOwner",
-    "type": "error"
+    name: "NotCategoryOwner",
+    type: "error",
   },
   {
-    "inputs": [],
-    "name": "NotMarketplaceOrOwner",
-    "type": "error"
+    inputs: [],
+    name: "NotMarketplaceOrOwner",
+    type: "error",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "buyer",
-        "type": "address"
+        internalType: "address",
+        name: "buyer",
+        type: "address",
       },
       {
-        "internalType": "uint256",
-        "name": "categoryId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "categoryId",
+        type: "uint256",
+      },
     ],
-    "name": "PermissionAlreadyExists",
-    "type": "error"
+    name: "PermissionAlreadyExists",
+    type: "error",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "buyer",
-        "type": "address"
+        internalType: "address",
+        name: "buyer",
+        type: "address",
       },
       {
-        "internalType": "uint256",
-        "name": "categoryId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "categoryId",
+        type: "uint256",
+      },
     ],
-    "name": "PermissionNotFound",
-    "type": "error"
+    name: "PermissionNotFound",
+    type: "error",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "categoryId",
-        "type": "uint256"
+        indexed: true,
+        internalType: "uint256",
+        name: "categoryId",
+        type: "uint256",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
     ],
-    "name": "DataCategoryDeactivated",
-    "type": "event"
+    name: "DataCategoryDeactivated",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "categoryId",
-        "type": "uint256"
+        indexed: true,
+        internalType: "uint256",
+        name: "categoryId",
+        type: "uint256",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
       },
       {
-        "indexed": false,
-        "internalType": "string",
-        "name": "name",
-        "type": "string"
+        indexed: false,
+        internalType: "string",
+        name: "name",
+        type: "string",
       },
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "pricePerDay",
-        "type": "uint256"
-      }
+        indexed: false,
+        internalType: "uint256",
+        name: "pricePerDay",
+        type: "uint256",
+      },
     ],
-    "name": "DataCategoryRegistered",
-    "type": "event"
+    name: "DataCategoryRegistered",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "categoryId",
-        "type": "uint256"
+        indexed: true,
+        internalType: "uint256",
+        name: "categoryId",
+        type: "uint256",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
       },
       {
-        "indexed": false,
-        "internalType": "string",
-        "name": "name",
-        "type": "string"
+        indexed: false,
+        internalType: "string",
+        name: "name",
+        type: "string",
       },
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "pricePerDay",
-        "type": "uint256"
-      }
+        indexed: false,
+        internalType: "uint256",
+        name: "pricePerDay",
+        type: "uint256",
+      },
     ],
-    "name": "DataCategoryUpdated",
-    "type": "event"
+    name: "DataCategoryUpdated",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "previousOwner",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "previousOwner",
+        type: "address",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
+        indexed: true,
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
     ],
-    "name": "OwnershipTransferred",
-    "type": "event"
+    name: "OwnershipTransferred",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "categoryId",
-        "type": "uint256"
+        indexed: true,
+        internalType: "uint256",
+        name: "categoryId",
+        type: "uint256",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "buyer",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "buyer",
+        type: "address",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
       },
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "expiryTime",
-        "type": "uint256"
-      }
+        indexed: false,
+        internalType: "uint256",
+        name: "expiryTime",
+        type: "uint256",
+      },
     ],
-    "name": "PermissionGranted",
-    "type": "event"
+    name: "PermissionGranted",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "categoryId",
-        "type": "uint256"
+        indexed: true,
+        internalType: "uint256",
+        name: "categoryId",
+        type: "uint256",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "buyer",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "buyer",
+        type: "address",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
     ],
-    "name": "PermissionRevoked",
-    "type": "event"
+    name: "PermissionRevoked",
+    type: "event",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "buyer",
-        "type": "address"
+        internalType: "address",
+        name: "buyer",
+        type: "address",
       },
       {
-        "internalType": "uint256",
-        "name": "categoryId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "categoryId",
+        type: "uint256",
+      },
     ],
-    "name": "checkPermission",
-    "outputs": [
+    name: "checkPermission",
+    outputs: [
       {
-        "internalType": "bool",
-        "name": "hasPermission",
-        "type": "bool"
+        internalType: "bool",
+        name: "hasPermission",
+        type: "bool",
       },
       {
-        "internalType": "uint256",
-        "name": "expiryTime",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "expiryTime",
+        type: "uint256",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "categoryId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "categoryId",
+        type: "uint256",
+      },
     ],
-    "name": "deactivateDataCategory",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "deactivateDataCategory",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "categoryId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "categoryId",
+        type: "uint256",
+      },
     ],
-    "name": "getDataCategory",
-    "outputs": [
+    name: "getDataCategory",
+    outputs: [
       {
-        "components": [
+        components: [
           {
-            "internalType": "address",
-            "name": "owner",
-            "type": "address"
+            internalType: "string",
+            name: "name",
+            type: "string",
           },
           {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
+            internalType: "address",
+            name: "owner",
+            type: "address",
           },
           {
-            "internalType": "uint256",
-            "name": "pricePerDay",
-            "type": "uint256"
+            internalType: "bool",
+            name: "isActive",
+            type: "bool",
           },
           {
-            "internalType": "bytes32",
-            "name": "dataHash",
-            "type": "bytes32"
+            internalType: "uint256",
+            name: "pricePerDay",
+            type: "uint256",
           },
           {
-            "internalType": "bool",
-            "name": "active",
-            "type": "bool"
-          }
+            internalType: "bytes32",
+            name: "dataHash",
+            type: "bytes32",
+          },
         ],
-        "internalType": "struct DataVault.DataCategory",
-        "name": "",
-        "type": "tuple"
-      }
+        internalType: "struct DataVault.DataCategory",
+        name: "",
+        type: "tuple",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
     ],
-    "name": "getUserCategories",
-    "outputs": [
+    name: "getUserCategories",
+    outputs: [
       {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      }
+        internalType: "uint256[]",
+        name: "",
+        type: "uint256[]",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "buyer",
-        "type": "address"
+        internalType: "address",
+        name: "buyer",
+        type: "address",
       },
       {
-        "internalType": "uint256",
-        "name": "categoryId",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "categoryId",
+        type: "uint256",
       },
       {
-        "internalType": "uint256",
-        "name": "duration",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "duration",
+        type: "uint256",
+      },
     ],
-    "name": "grantPermission",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "grantPermission",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
+    inputs: [],
+    name: "owner",
+    outputs: [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "string",
-        "name": "_name",
-        "type": "string"
+        internalType: "string",
+        name: "_name",
+        type: "string",
       },
       {
-        "internalType": "uint256",
-        "name": "_pricePerDay",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "_pricePerDay",
+        type: "uint256",
       },
       {
-        "internalType": "bytes32",
-        "name": "_dataHash",
-        "type": "bytes32"
-      }
+        internalType: "bytes32",
+        name: "_dataHash",
+        type: "bytes32",
+      },
     ],
-    "name": "registerDataCategory",
-    "outputs": [
+    name: "registerDataCategory",
+    outputs: [
       {
-        "internalType": "uint256",
-        "name": "categoryId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "categoryId",
+        type: "uint256",
+      },
     ],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    inputs: [],
+    name: "renounceOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "buyer",
-        "type": "address"
+        internalType: "address",
+        name: "buyer",
+        type: "address",
       },
       {
-        "internalType": "uint256",
-        "name": "categoryId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "categoryId",
+        type: "uint256",
+      },
     ],
-    "name": "revokePermission",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "revokePermission",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "_marketplace",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "_marketplace",
+        type: "address",
+      },
     ],
-    "name": "setMarketplace",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "setMarketplace",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
     ],
-    "name": "transferOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "transferOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "categoryId",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "categoryId",
+        type: "uint256",
       },
       {
-        "internalType": "string",
-        "name": "_name",
-        "type": "string"
+        internalType: "string",
+        name: "_name",
+        type: "string",
       },
       {
-        "internalType": "uint256",
-        "name": "_pricePerDay",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "_pricePerDay",
+        type: "uint256",
       },
       {
-        "internalType": "bytes32",
-        "name": "_dataHash",
-        "type": "bytes32"
-      }
+        internalType: "bytes32",
+        name: "_dataHash",
+        type: "bytes32",
+      },
     ],
-    "name": "updateDataCategory",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
+    name: "updateDataCategory",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ];
 
 // ABI untuk kontrak DataMarketplace
 export const DATA_MARKETPLACE_ABI = [
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "_dataVault",
-        "type": "address"
+        internalType: "address",
+        name: "_dataVault",
+        type: "address",
       },
       {
-        "internalType": "address",
-        "name": "_paymentSplitter",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "_paymentSplitter",
+        type: "address",
+      },
     ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
+    stateMutability: "nonpayable",
+    type: "constructor",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "requestId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "requestId",
+        type: "uint256",
+      },
     ],
-    "name": "InvalidRequestStatus",
-    "type": "error"
+    name: "InvalidRequestStatus",
+    type: "error",
   },
   {
-    "inputs": [],
-    "name": "InvalidValue",
-    "type": "error"
+    inputs: [],
+    name: "InvalidValue",
+    type: "error",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "requestId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "requestId",
+        type: "uint256",
+      },
     ],
-    "name": "NotRequestOwner",
-    "type": "error"
+    name: "NotRequestOwner",
+    type: "error",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "requestId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "requestId",
+        type: "uint256",
+      },
     ],
-    "name": "RequestNotFound",
-    "type": "error"
+    name: "RequestNotFound",
+    type: "error",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "requestId",
-        "type": "uint256"
+        indexed: true,
+        internalType: "uint256",
+        name: "requestId",
+        type: "uint256",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "dataOwner",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "dataOwner",
+        type: "address",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "buyer",
-        "type": "address"
-      }
+        indexed: true,
+        internalType: "address",
+        name: "buyer",
+        type: "address",
+      },
     ],
-    "name": "AccessRequestApproved",
-    "type": "event"
+    name: "AccessRequestApproved",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "requestId",
-        "type": "uint256"
+        indexed: true,
+        internalType: "uint256",
+        name: "requestId",
+        type: "uint256",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "buyer",
-        "type": "address"
-      }
+        indexed: true,
+        internalType: "address",
+        name: "buyer",
+        type: "address",
+      },
     ],
-    "name": "AccessRequestCancelled",
-    "type": "event"
+    name: "AccessRequestCancelled",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "requestId",
-        "type": "uint256"
+        indexed: true,
+        internalType: "uint256",
+        name: "requestId",
+        type: "uint256",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "dataOwner",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "dataOwner",
+        type: "address",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "buyer",
-        "type": "address"
-      }
+        indexed: true,
+        internalType: "address",
+        name: "buyer",
+        type: "address",
+      },
     ],
-    "name": "AccessRequestCreated",
-    "type": "event"
+    name: "AccessRequestCreated",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "requestId",
-        "type": "uint256"
+        indexed: true,
+        internalType: "uint256",
+        name: "requestId",
+        type: "uint256",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "dataOwner",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "dataOwner",
+        type: "address",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "buyer",
-        "type": "address"
-      }
+        indexed: true,
+        internalType: "address",
+        name: "buyer",
+        type: "address",
+      },
     ],
-    "name": "AccessRequestRejected",
-    "type": "event"
+    name: "AccessRequestRejected",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "previousOwner",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "previousOwner",
+        type: "address",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
+        indexed: true,
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
     ],
-    "name": "OwnershipTransferred",
-    "type": "event"
+    name: "OwnershipTransferred",
+    type: "event",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "requestId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "requestId",
+        type: "uint256",
+      },
     ],
-    "name": "approveRequest",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "approveRequest",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "requestId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "requestId",
+        type: "uint256",
+      },
     ],
-    "name": "cancelRequest",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "cancelRequest",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
+    inputs: [],
+    name: "owner",
+    outputs: [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "categoryId",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "categoryId",
+        type: "uint256",
       },
       {
-        "internalType": "uint256",
-        "name": "duration",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "duration",
+        type: "uint256",
+      },
     ],
-    "name": "quote",
-    "outputs": [
+    name: "quote",
+    outputs: [
       {
-        "internalType": "uint256",
-        "name": "totalPrice",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "totalPrice",
+        type: "uint256",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "requestId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "requestId",
+        type: "uint256",
+      },
     ],
-    "name": "rejectRequest",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "rejectRequest",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    inputs: [],
+    name: "renounceOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "categoryId",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "categoryId",
+        type: "uint256",
       },
       {
-        "internalType": "uint256",
-        "name": "duration",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "duration",
+        type: "uint256",
+      },
     ],
-    "name": "requestAccess",
-    "outputs": [
+    name: "requestAccess",
+    outputs: [
       {
-        "internalType": "uint256",
-        "name": "requestId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "requestId",
+        type: "uint256",
+      },
     ],
-    "stateMutability": "payable",
-    "type": "function"
+    stateMutability: "payable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
     ],
-    "name": "transferOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
+    name: "transferOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ];
 
 // ABI untuk kontrak PaymentSplitter
 export const PAYMENT_SPLITTER_ABI = [
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "_platformWallet",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "_platformWallet",
+        type: "address",
+      },
     ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
+    stateMutability: "nonpayable",
+    type: "constructor",
   },
   {
-    "inputs": [],
-    "name": "InvalidPercentage",
-    "type": "error"
+    inputs: [],
+    name: "InvalidPercentage",
+    type: "error",
   },
   {
-    "inputs": [],
-    "name": "InvalidPlatformWallet",
-    "type": "error"
+    inputs: [],
+    name: "InvalidPlatformWallet",
+    type: "error",
   },
   {
-    "inputs": [],
-    "name": "TransferFailed",
-    "type": "error"
+    inputs: [],
+    name: "TransferFailed",
+    type: "error",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "previousOwner",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "previousOwner",
+        type: "address",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
+        indexed: true,
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
     ],
-    "name": "OwnershipTransferred",
-    "type": "event"
+    name: "OwnershipTransferred",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "dataOwner",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "dataOwner",
+        type: "address",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "platformWallet",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "platformWallet",
+        type: "address",
       },
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "ownerAmount",
-        "type": "uint256"
+        indexed: false,
+        internalType: "uint256",
+        name: "ownerAmount",
+        type: "uint256",
       },
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "platformAmount",
-        "type": "uint256"
-      }
+        indexed: false,
+        internalType: "uint256",
+        name: "platformAmount",
+        type: "uint256",
+      },
     ],
-    "name": "PaymentSplit",
-    "type": "event"
+    name: "PaymentSplit",
+    type: "event",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "totalAmount",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "totalAmount",
+        type: "uint256",
       },
       {
-        "internalType": "uint256",
-        "name": "duration",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "duration",
+        type: "uint256",
       },
       {
-        "internalType": "uint256",
-        "name": "elapsedTime",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "elapsedTime",
+        type: "uint256",
+      },
     ],
-    "name": "calculateProRatedRefund",
-    "outputs": [
+    name: "calculateProRatedRefund",
+    outputs: [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
     ],
-    "stateMutability": "pure",
-    "type": "function"
+    stateMutability: "pure",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
+    inputs: [],
+    name: "owner",
+    outputs: [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "platformFeePercentage",
-    "outputs": [
+    inputs: [],
+    name: "platformFeePercentage",
+    outputs: [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "platformWallet",
-    "outputs": [
+    inputs: [],
+    name: "platformWallet",
+    outputs: [
       {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    inputs: [],
+    name: "renounceOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "_platformFeePercentage",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "_platformFeePercentage",
+        type: "uint256",
+      },
     ],
-    "name": "setPlatformFeePercentage",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "setPlatformFeePercentage",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "_platformWallet",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "_platformWallet",
+        type: "address",
+      },
     ],
-    "name": "setPlatformWallet",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "setPlatformWallet",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "dataOwner",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "dataOwner",
+        type: "address",
+      },
     ],
-    "name": "split",
-    "outputs": [
+    name: "split",
+    outputs: [
       {
-        "internalType": "uint256",
-        "name": "ownerAmount",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "ownerAmount",
+        type: "uint256",
       },
       {
-        "internalType": "uint256",
-        "name": "platformAmount",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "platformAmount",
+        type: "uint256",
+      },
     ],
-    "stateMutability": "payable",
-    "type": "function"
+    stateMutability: "payable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
     ],
-    "name": "transferOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
+    name: "transferOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ];

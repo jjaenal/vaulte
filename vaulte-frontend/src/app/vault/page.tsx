@@ -1,7 +1,7 @@
 'use client';
 
 import { useAccount } from 'wagmi';
-import { useMemo, useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useToast } from '@/components/ui/ToastProvider';
 import { useDataVault } from '@/hooks/useDataVault';
@@ -35,67 +35,16 @@ type Category = {
 export default function VaultPage() {
   const { address, isConnected } = useAccount();
   const { showToast } = useToast();
-  const { updateCategory, toggleCategory: toggleCategoryWeb3, isLoading } = useDataVault();
+  const {
+    updateCategory,
+    toggleCategory: toggleCategoryWeb3,
+    isLoading,
+    userCategories,
+    getDataCategory,
+    isLoadingCategories,
+  } = useDataVault();
 
-  const initialCategories = useMemo<Category[]>(
-    () => [
-      {
-        id: 1,
-        name: 'Fitness Data',
-        pricePerDay: 0.05,
-        enabled: true,
-        activeBuyers: 3,
-        estimatedMonthly: 1.5,
-        icon: '🏋️',
-        buyers: [
-          { name: 'HealthCo', lastPurchase: '2025-01-10', status: 'active' },
-          { name: 'WellnessAI', lastPurchase: '2025-01-08', status: 'paused' },
-          { name: 'FitLabs', lastPurchase: '2025-01-02', status: 'active' },
-        ],
-        sampleFields: ['Steps', 'Heart Rate', 'Calories', 'Sleep Duration'],
-      },
-      {
-        id: 2,
-        name: 'Location History',
-        pricePerDay: 0.08,
-        enabled: false,
-        activeBuyers: 1,
-        estimatedMonthly: 0.8,
-        icon: '📍',
-        buyers: [
-          { name: 'MapSense', lastPurchase: '2025-01-11', status: 'pending' },
-        ],
-        sampleFields: ['Latitude', 'Longitude', 'Timestamp', 'Accuracy'],
-      },
-      {
-        id: 3,
-        name: 'Browsing Activity',
-        pricePerDay: 0.03,
-        enabled: true,
-        activeBuyers: 5,
-        estimatedMonthly: 1.2,
-        icon: '🧭',
-        buyers: [
-          { name: 'AdAnalytics', lastPurchase: '2025-01-12', status: 'active' },
-          { name: 'MarketIntel', lastPurchase: '2025-01-07', status: 'active' },
-        ],
-        sampleFields: ['URL', 'Referrer', 'Session Length', 'Device'],
-      },
-      {
-        id: 4,
-        name: 'Shopping Habits',
-        pricePerDay: 0.04,
-        enabled: false,
-        activeBuyers: 0,
-        estimatedMonthly: 0.0,
-        icon: '🛍️',
-        buyers: [],
-        sampleFields: ['Product', 'Category', 'Spend', 'Frequency'],
-      },
-    ], []
-  );
-
-  const [categories, setCategories] = useState<Category[]>(initialCategories);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [editPrice, setEditPrice] = useState<string>('');
@@ -149,6 +98,42 @@ export default function VaultPage() {
     }
   };
 
+  // Ambil kategori on-chain milik user dan render ke grid
+  useEffect(() => {
+    const fetchCategories = async () => {
+      // Komentar (early return): Jika belum connect atau belum ada kategori, kosongkan list
+      if (!isConnected || !userCategories || userCategories.length === 0) {
+        setCategories([]);
+        return;
+      }
+
+      try {
+        const promises = userCategories.map(async (id) => {
+          const cat = await getDataCategory(Number(id));
+          // Komentar: Map hasil API ke struktur Category untuk UI
+          return {
+            id: Number(id),
+            name: cat?.name ?? `Category #${id}`,
+            pricePerDay: Number(cat?.pricePerDay ?? 0),
+            enabled: Boolean(cat?.active ?? true),
+            activeBuyers: 0,
+            estimatedMonthly: 0,
+            icon: '📁',
+            buyers: [],
+            sampleFields: [],
+          } as Category;
+        });
+        const list = await Promise.all(promises);
+        setCategories(list);
+      } catch (err) {
+        console.error('Gagal fetch kategori Vault:', err);
+        showToast('Gagal mengambil kategori on-chain', 'error');
+      }
+    };
+
+    fetchCategories();
+  }, [isConnected, userCategories, getDataCategory, showToast]);
+
   const connectSource = (name: string) => {
     setSources((prev) =>
       prev.map((s) => (s.name === name ? { ...s, connected: true, lastSynced: new Date().toISOString().slice(0, 10) } : s))
@@ -197,6 +182,12 @@ export default function VaultPage() {
         {/* Data Categories Grid */}
         <div>
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Your Data Categories</h2>
+          {isLoadingCategories && (
+            <div className="text-sm text-gray-500 mb-4">Loading your on-chain categories...</div>
+          )}
+          {!isLoadingCategories && categories.length === 0 && (
+            <div className="text-sm text-gray-500 mb-4">Belum ada kategori on-chain. Tambah kategori dari Dashboard.</div>
+          )}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {categories.map((cat) => (
               <div
