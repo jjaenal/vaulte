@@ -15,7 +15,7 @@ export default function RequestAccessForm({
   categoryId,
   categoryName,
   pricePerDay,
-  onRequestComplete
+  onRequestComplete,
 }: RequestAccessFormProps) {
   const [duration, setDuration] = useState(7);
   const [isOpen, setIsOpen] = useState(false);
@@ -42,10 +42,12 @@ export default function RequestAccessForm({
     setIsOpen(false);
   };
 
-  const handleDurationChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDurationChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const newDuration = parseInt(e.target.value);
     setDuration(newDuration);
-    
+
     // Update quote when duration changes
     try {
       const quote = await getQuote(categoryId, newDuration);
@@ -60,7 +62,7 @@ export default function RequestAccessForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       await handleTx(() => requestAccessTx(categoryId, duration));
       showToast('Access request submitted', 'success');
@@ -84,8 +86,10 @@ export default function RequestAccessForm({
       {isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
-            <h3 className="text-lg font-semibold mb-4">Request Access to {categoryName}</h3>
-            
+            <h3 className="text-lg font-semibold mb-4">
+              Request Access to {categoryName}
+            </h3>
+
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -105,11 +109,13 @@ export default function RequestAccessForm({
                   <span>30 days</span>
                 </div>
               </div>
-              
+
               <div className="mb-6 bg-gray-50 p-4 rounded-md">
                 <div className="flex justify-between mb-2">
                   <span className="text-sm text-gray-600">Price per day:</span>
-                  <span className="text-sm font-medium">{pricePerDay.toFixed(6)} ETH</span>
+                  <span className="text-sm font-medium">
+                    {pricePerDay.toFixed(6)} ETH
+                  </span>
                 </div>
                 <div className="flex justify-between mb-2">
                   <span className="text-sm text-gray-600">Duration:</span>
@@ -118,11 +124,14 @@ export default function RequestAccessForm({
                 <div className="flex justify-between pt-2 border-t border-gray-200">
                   <span className="text-sm font-medium">Total price:</span>
                   <span className="text-sm font-bold">
-                    {totalPrice !== null ? totalPrice.toFixed(6) : 'Calculating...'} ETH
+                    {totalPrice !== null
+                      ? totalPrice.toFixed(6)
+                      : 'Calculating...'}{' '}
+                    ETH
                   </span>
                 </div>
               </div>
-              
+
               <div className="flex justify-end space-x-3">
                 <button
                   type="button"

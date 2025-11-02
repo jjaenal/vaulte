@@ -16,13 +16,13 @@ export function useToast() {
 
   const toast = (props: ToastProps) => {
     const id = Math.random().toString(36).substring(2, 9);
-    setToasts((prev) => [...prev, props]);
-    
+    setToasts(prev => [...prev, props]);
+
     // Auto dismiss after 3 seconds
     setTimeout(() => {
-      setToasts((prev) => prev.filter((_, i) => i !== 0));
+      setToasts(prev => prev.filter((_, i) => i !== 0));
     }, 3000);
-    
+
     console.log(`Toast: ${props.title} - ${props.description}`);
     return id;
   };

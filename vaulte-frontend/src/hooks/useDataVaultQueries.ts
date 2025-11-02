@@ -33,8 +33,10 @@ export interface CategoryDetails {
  */
 export const dataVaultKeys = {
   all: ['dataVault'] as const,
-  userCategories: (address?: string) => ['dataVault', 'userCategories', address] as const,
-  category: (categoryId: number) => ['dataVault', 'category', categoryId] as const,
+  userCategories: (address?: string) =>
+    ['dataVault', 'userCategories', address] as const,
+  category: (categoryId: number) =>
+    ['dataVault', 'category', categoryId] as const,
 };
 
 // Wagmi config untuk query functions
@@ -47,12 +49,14 @@ const useLocalHardhat =
 // Komentar (ID): Hindari menyertakan Hardhat dan transport 127.0.0.1
 // jika tidak diperlukan, agar tidak ada request berulang ke 127.0.0.1
 const wagmiConfig = getDefaultConfig({
-  appName: "Vaulté",
-  projectId: "3b2e592aaef7497d1a7c1b19629a2d21",
-  chains: useLocalHardhat ? [hardhat, polygonMumbai, polygon] : [polygonMumbai, polygon],
+  appName: 'Vaulté',
+  projectId: '3b2e592aaef7497d1a7c1b19629a2d21',
+  chains: useLocalHardhat
+    ? [hardhat, polygonMumbai, polygon]
+    : [polygonMumbai, polygon],
   transports: useLocalHardhat
     ? {
-        [hardhat.id]: http("http://127.0.0.1:8545"),
+        [hardhat.id]: http('http://127.0.0.1:8545'),
         [polygonMumbai.id]: http(),
         [polygon.id]: http(),
       }
@@ -65,7 +69,7 @@ const wagmiConfig = getDefaultConfig({
 
 /**
  * Hook untuk fetch user categories dengan TanStack Query
- * 
+ *
  * Keunggulan vs custom hook:
  * - Background refresh otomatis tanpa blocking UI
  * - Deduplication dan caching terpusat
@@ -79,7 +83,7 @@ export function useUserCategories(userAddress?: string) {
   return useQuery({
     // Query key yang stabil berdasarkan address
     queryKey: dataVaultKeys.userCategories(userAddress),
-    
+
     // Query function: fetch data dari contract
     queryFn: async (): Promise<DataCategory[]> => {
       if (!address) {
@@ -105,10 +109,10 @@ export function useUserCategories(userAddress?: string) {
         throw error;
       }
     },
-    
+
     // Hanya jalankan query kalau address tersedia
     enabled: !!address,
-    
+
     // Override default config: no auto refetch, manual only
     staleTime: Infinity, // data dianggap selalu segar sampai di-invalidate
     gcTime: 30 * 60 * 1000, // 30 minutes
@@ -116,7 +120,7 @@ export function useUserCategories(userAddress?: string) {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     refetchOnMount: false,
-    
+
     // Retry logic khusus untuk blockchain
     retry: (failureCount, error) => {
       // Jangan retry untuk wallet connection errors
@@ -137,7 +141,7 @@ export function useDataCategory(categoryId: number) {
 
   return useQuery({
     queryKey: dataVaultKeys.category(categoryId),
-    
+
     queryFn: async () => {
       if (!Number.isFinite(categoryId) || categoryId <= 0) {
         throw new Error('Invalid category ID');
@@ -145,15 +149,15 @@ export function useDataCategory(categoryId: number) {
 
       try {
         const response = await fetch(`/api/data-category/${categoryId}`);
-        
+
         if (response.status === 404) {
           return null; // Category tidak ditemukan
         }
-        
+
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        
+
         return response.json();
       } catch (error) {
         console.error(`Failed to fetch category ${categoryId}:`, error);
@@ -165,13 +169,13 @@ export function useDataCategory(categoryId: number) {
         throw error;
       }
     },
-    
+
     enabled: Number.isFinite(categoryId) && categoryId > 0,
-    
+
     // Category details lebih stabil, cache lebih lama
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 30 * 60 * 1000, // 30 minutes
-    
+
     // Tidak perlu background refresh untuk detail category
     refetchInterval: false,
   });
@@ -199,17 +203,20 @@ export function useDataVaultActions() {
   }, [queryClient]);
 
   // Update cache setelah write operations (optimistic updates)
-  const updateCategoryInCache = useCallback((categoryId: number, updater: (old: CategoryDetails | null) => CategoryDetails | null) => {
-    queryClient.setQueryData(
-      dataVaultKeys.category(categoryId),
-      updater
-    );
-    
-    // Juga update user categories list jika perlu
-    queryClient.invalidateQueries({
-      queryKey: dataVaultKeys.userCategories(address),
-    });
-  }, [queryClient, address]);
+  const updateCategoryInCache = useCallback(
+    (
+      categoryId: number,
+      updater: (old: CategoryDetails | null) => CategoryDetails | null
+    ) => {
+      queryClient.setQueryData(dataVaultKeys.category(categoryId), updater);
+
+      // Juga update user categories list jika perlu
+      queryClient.invalidateQueries({
+        queryKey: dataVaultKeys.userCategories(address),
+      });
+    },
+    [queryClient, address]
+  );
 
   return {
     refreshUserCategories,
@@ -234,7 +241,8 @@ export function useCategoriesSSE(addr?: string, onUpdate?: () => void) {
   useEffect(() => {
     if (!target) return;
 
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+    const backendUrl =
+      process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
     const url = `${backendUrl}/sse/categories/${target}`;
     // Buat koneksi SSE tanpa kredensial; cukup gunakan default
     const es = new EventSource(url);
@@ -244,7 +252,7 @@ export function useCategoriesSSE(addr?: string, onUpdate?: () => void) {
       try {
         // Parse payload JSON untuk digunakan dalam setQueryData
         const categoriesData = JSON.parse(ev.data);
-        
+
         // Jika ada callback khusus, gunakan itu
         if (typeof onUpdate === 'function') {
           onUpdate();
@@ -255,12 +263,17 @@ export function useCategoriesSSE(addr?: string, onUpdate?: () => void) {
             dataVaultKeys.userCategories(target),
             categoriesData
           );
-          console.log('SSE: Update kategori via setQueryData', categoriesData.length);
+          console.log(
+            'SSE: Update kategori via setQueryData',
+            categoriesData.length
+          );
         } else {
           // Fallback ke invalidate jika format data tidak sesuai ekspektasi
-          queryClient.invalidateQueries({ queryKey: dataVaultKeys.userCategories(target) });
+          queryClient.invalidateQueries({
+            queryKey: dataVaultKeys.userCategories(target),
+          });
         }
-        
+
         // Reset flag error saat koneksi kembali normal
         errorNotifiedRef.current = false;
       } catch (err) {
@@ -269,7 +282,9 @@ export function useCategoriesSSE(addr?: string, onUpdate?: () => void) {
         if (typeof onUpdate === 'function') {
           onUpdate();
         } else {
-          queryClient.invalidateQueries({ queryKey: dataVaultKeys.userCategories(target) });
+          queryClient.invalidateQueries({
+            queryKey: dataVaultKeys.userCategories(target),
+          });
         }
       }
     };
@@ -279,7 +294,10 @@ export function useCategoriesSSE(addr?: string, onUpdate?: () => void) {
       if (es.readyState === EventSource.CONNECTING) return;
       console.warn('SSE error (non-transient):', err);
       if (!errorNotifiedRef.current) {
-        toast({ title: 'Live update terputus', description: 'SSE error, mencoba tetap jalan tanpa push.' });
+        toast({
+          title: 'Live update terputus',
+          description: 'SSE error, mencoba tetap jalan tanpa push.',
+        });
         errorNotifiedRef.current = true;
       }
     };

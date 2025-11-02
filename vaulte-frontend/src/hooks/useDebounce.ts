@@ -41,7 +41,7 @@ export function useThrottle<T extends (...args: unknown[]) => unknown>(
   const throttledCallback = useCallback(
     (...args: Parameters<T>) => {
       const now = Date.now();
-      
+
       // Jika belum melewati delay, skip call
       if (now - lastCallRef.current < delay) {
         return;

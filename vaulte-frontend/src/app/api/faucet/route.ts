@@ -7,10 +7,14 @@ export async function POST(request: Request) {
   try {
     const { address, amountEth } = await request.json();
     if (typeof address !== 'string' || !address.match(/^0x[0-9a-fA-F]{40}$/)) {
-      return NextResponse.json({ error: 'Alamat tidak valid' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Alamat tidak valid' },
+        { status: 400 }
+      );
     }
 
-    const eth = typeof amountEth === 'number' && amountEth > 0 ? amountEth : 100; // default 100 ETH
+    const eth =
+      typeof amountEth === 'number' && amountEth > 0 ? amountEth : 100; // default 100 ETH
     // Konversi ETH ke wei dengan presisi menggunakan viem.parseEther
     // Catatan: Hindari Math.floor(eth * 1e18) karena melampaui Number.MAX_SAFE_INTEGER dan kehilangan presisi
     const weiBigInt = parseEther(String(eth));
@@ -29,10 +33,16 @@ export async function POST(request: Request) {
     });
 
     // Tipe aman untuk respons JSON-RPC
-    type JsonRpcResponse = { error?: { code?: number; message?: string }; result?: unknown };
+    type JsonRpcResponse = {
+      error?: { code?: number; message?: string };
+      result?: unknown;
+    };
     const data: JsonRpcResponse = await rpcResp.json();
     if (data.error) {
-      return NextResponse.json({ error: data.error.message || 'RPC error' }, { status: 500 });
+      return NextResponse.json(
+        { error: data.error.message || 'RPC error' },
+        { status: 500 }
+      );
     }
 
     // Verifikasi saldo setelah setBalance

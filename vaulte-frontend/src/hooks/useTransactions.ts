@@ -30,7 +30,10 @@ export function useTransactions() {
       }
       return receipt;
     } catch (e) {
-      const errObj = e as unknown as { shortMessage?: string; message?: string };
+      const errObj = e as unknown as {
+        shortMessage?: string;
+        message?: string;
+      };
       const errMsg = errObj?.shortMessage || errObj?.message || 'Unknown error';
       setStatus('error');
       setError(String(errMsg));

@@ -46,13 +46,13 @@ export default function RegisterDataForm() {
           <input
             type="text"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={e => setName(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="e.g. Fitness Data"
             required
           />
         </div>
-        
+
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Price Per Day (ETH)
@@ -60,7 +60,7 @@ export default function RegisterDataForm() {
           <input
             type="number"
             value={pricePerDay}
-            onChange={(e) => setPricePerDay(e.target.value)}
+            onChange={e => setPricePerDay(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="0.01"
             step="0.001"
@@ -68,7 +68,7 @@ export default function RegisterDataForm() {
             required
           />
         </div>
-        
+
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Data Hash (IPFS CID or other hash)
@@ -76,7 +76,7 @@ export default function RegisterDataForm() {
           <input
             type="text"
             value={dataHash}
-            onChange={(e) => setDataHash(e.target.value)}
+            onChange={e => setDataHash(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="0x..."
           />
@@ -84,7 +84,7 @@ export default function RegisterDataForm() {
             This is where your encrypted data is stored
           </p>
         </div>
-        
+
         <button
           type="submit"
           disabled={isLoading}

@@ -17,7 +17,7 @@ export async function retryApiCall<T>(
     maxRetries = 3,
     baseDelay = 1000,
     maxDelay = 10000,
-    backoffFactor = 2
+    backoffFactor = 2,
   } = options;
 
   let lastError: Error;
@@ -27,7 +27,7 @@ export async function retryApiCall<T>(
       return await apiCall();
     } catch (error) {
       lastError = error as Error;
-      
+
       // Jika ini adalah attempt terakhir, throw error
       if (attempt === maxRetries) {
         throw lastError;
@@ -43,8 +43,10 @@ export async function retryApiCall<T>(
       const jitter = Math.random() * 0.1 * delay;
       const finalDelay = delay + jitter;
 
-      console.log(`API call failed (attempt ${attempt + 1}/${maxRetries + 1}), retrying in ${Math.round(finalDelay)}ms...`);
-      
+      console.log(
+        `API call failed (attempt ${attempt + 1}/${maxRetries + 1}), retrying in ${Math.round(finalDelay)}ms...`
+      );
+
       await new Promise(resolve => setTimeout(resolve, finalDelay));
     }
   }
@@ -56,22 +58,24 @@ export async function retryApiCall<T>(
  * Utility untuk handle API errors dengan user-friendly messages
  */
 export function getApiErrorMessage(error: unknown): string {
-  const err = error as { response?: { status?: number }; message?: string } | undefined;
+  const err = error as
+    | { response?: { status?: number }; message?: string }
+    | undefined;
   if (err?.response?.status === 429) {
     return 'Terlalu banyak permintaan. Silakan coba lagi dalam beberapa saat.';
   }
-  
+
   if (err?.response?.status === 404) {
     return 'Data tidak ditemukan.';
   }
-  
+
   if ((err?.response?.status ?? 0) >= 500) {
     return 'Terjadi kesalahan server. Silakan coba lagi nanti.';
   }
-  
+
   if (err?.message?.includes('Failed to fetch')) {
     return 'Koneksi bermasalah. Periksa koneksi internet Anda.';
   }
-  
+
   return err?.message || 'Terjadi kesalahan yang tidak diketahui.';
 }

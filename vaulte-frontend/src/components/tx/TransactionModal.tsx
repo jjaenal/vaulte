@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 
@@ -18,14 +18,22 @@ export function TransactionModal({
   if (!open) return null;
 
   const title =
-    status === 'pending' ? 'Transaction Pending' :
-    status === 'success' ? 'Transaction Success' :
-    status === 'error' ? 'Transaction Error' : 'Transaction';
+    status === 'pending'
+      ? 'Transaction Pending'
+      : status === 'success'
+        ? 'Transaction Success'
+        : status === 'error'
+          ? 'Transaction Error'
+          : 'Transaction';
 
   const description =
-    status === 'pending' ? 'Please confirm and wait for on-chain confirmation.' :
-    status === 'success' ? 'Your transaction was confirmed successfully.' :
-    status === 'error' ? 'There was an error processing the transaction.' : '';
+    status === 'pending'
+      ? 'Please confirm and wait for on-chain confirmation.'
+      : status === 'success'
+        ? 'Your transaction was confirmed successfully.'
+        : status === 'error'
+          ? 'There was an error processing the transaction.'
+          : '';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">

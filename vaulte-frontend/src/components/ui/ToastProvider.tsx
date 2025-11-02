@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React, { createContext, useContext, useState } from 'react';
 import Toast from './Toast';
 
@@ -18,8 +18,14 @@ export const useToast = () => {
   return context;
 };
 
-export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [toast, setToast] = useState<{ message: string; type: ToastType; isVisible: boolean }>({
+export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [toast, setToast] = useState<{
+    message: string;
+    type: ToastType;
+    isVisible: boolean;
+  }>({
     message: '',
     type: 'info',
     isVisible: false,
@@ -30,7 +36,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const hideToast = () => {
-    setToast((prev) => ({ ...prev, isVisible: false }));
+    setToast(prev => ({ ...prev, isVisible: false }));
   };
 
   return (

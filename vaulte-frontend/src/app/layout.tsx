@@ -11,7 +11,8 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Vaulté - Decentralized Personal Data Marketplace',
-  description: 'Monetize your personal data while maintaining full control and privacy',
+  description:
+    'Monetize your personal data while maintaining full control and privacy',
 };
 
 export default function RootLayout({

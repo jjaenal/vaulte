@@ -16,7 +16,10 @@ export default function SwitchToHardhat() {
       showToast('Berhasil switch ke Hardhat Local', 'success');
     } catch (error) {
       // Tampilkan notifikasi error menggunakan ToastProvider (message, type)
-      showToast('Gagal switch ke Hardhat Local. Pastikan network sudah ditambahkan di wallet.', 'error');
+      showToast(
+        'Gagal switch ke Hardhat Local. Pastikan network sudah ditambahkan di wallet.',
+        'error'
+      );
       console.error('Error switching to Hardhat:', error);
     }
   };
