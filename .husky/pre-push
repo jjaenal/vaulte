@@ -6,7 +6,8 @@ npm --prefix vaulte-contracts run test || exit 1
 # Backend: jalankan unit/integration tests
 npm --prefix vaulte-backend run test || exit 1
 
-# Frontend: pastikan bisa di-build (menangkap error tipe/kompilasi)
-npm --prefix vaulte-frontend run build || exit 1
+# Frontend: lint & format check (build ditangani di CI)
+npm --prefix vaulte-frontend run lint || exit 1
+npm --prefix vaulte-frontend run format:check || exit 1
 
 echo "[husky] Semua tes lolos ✅ Siap push"
