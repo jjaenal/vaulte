@@ -93,6 +93,13 @@
 - [x] Create development roadmap
 - [x] Add PR template (PULL_REQUEST_TEMPLATE.md) untuk quality checklist
 
+## 🧰 CI/CD & Workflow Backlog
+
+- [ ] Konfigurasi coverage threshold 100% untuk contracts (gagal bila `<100%`) via `solidity-coverage`
+- [ ] Integrasi Codecov untuk laporan coverage di PR (upload report dari CI)
+- [ ] Aktifkan branch protection rules: status checks wajib hijau (`lint`, `format`, `test`, `build`) sebelum merge
+- [ ] Tambahkan commitlint agar format pesan commit konsisten otomatis
+
 ---
 
 ## 💻 MONTH 2: Smart Contract Development
