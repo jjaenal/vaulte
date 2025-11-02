@@ -1,0 +1,12 @@
+echo "[husky] Menjalankan tes sebelum push"
+
+# Kontrak: jalankan unit tests
+npm --prefix vaulte-contracts run test || exit 1
+
+# Backend: jalankan unit/integration tests
+npm --prefix vaulte-backend run test || exit 1
+
+# Frontend: pastikan bisa di-build (menangkap error tipe/kompilasi)
+npm --prefix vaulte-frontend run build || exit 1
+
+echo "[husky] Semua tes lolos ✅ Siap push"

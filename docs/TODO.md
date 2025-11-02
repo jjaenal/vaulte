@@ -91,6 +91,7 @@
 - [x] Define git workflow (branching strategy)
 - [x] Setup code review process
 - [x] Create development roadmap
+- [x] Add PR template (PULL_REQUEST_TEMPLATE.md) untuk quality checklist
 
 ---
 
