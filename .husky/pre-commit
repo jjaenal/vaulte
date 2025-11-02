@@ -1,6 +1,3 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
 echo "[husky] Menjalankan lint-staged (prettier format untuk file yang berubah)"
 npx --no-install lint-staged || exit 1
 
