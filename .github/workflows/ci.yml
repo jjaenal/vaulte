@@ -26,10 +26,13 @@ jobs:
         run: npm run lint
       - name: Format Check (Prettier)
         working-directory: vaulte-contracts
-        run: npx prettier --check .
+        run: npm run format:check
       - name: Test
         working-directory: vaulte-contracts
         run: npx hardhat test
+      - name: Coverage
+        working-directory: vaulte-contracts
+        run: npx hardhat coverage
       - name: Gas report
         working-directory: vaulte-contracts
         run: REPORT_GAS=true npx hardhat test
