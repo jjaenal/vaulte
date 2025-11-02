@@ -111,8 +111,8 @@
 
 **Code Quality Tools**
 
-- [ ] Install Solhint: `npm install --save-dev solhint`
-- [ ] Configure Solhint rules (.solhint.json)
+- [x] Install Solhint: `npm install --save-dev solhint`
+- [x] Configure Solhint rules (.solhint.json)
 - [x] Install Prettier: `npm install --save-dev prettier prettier-plugin-solidity`
 - [x] Configure Prettier (.prettierrc)
 - [x] Setup pre-commit hooks (husky + lint-staged)

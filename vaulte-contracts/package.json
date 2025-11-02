@@ -12,6 +12,7 @@
     "lint:js": "eslint 'test/**/*.js' 'scripts/**/*.js'",
     "lint:fix": "prettier --write '**/*.{sol,js,json,md}'",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "deploy:mumbai": "hardhat run scripts/deploy.js --network mumbai",
     "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia",
     "deploy:local": "hardhat run scripts/deploy.js"
